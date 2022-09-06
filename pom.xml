@@ -11,6 +11,7 @@
 	<groupId>com.jiang</groupId>
 	<artifactId>fzte</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>war</packaging>
 	<name>fzte</name>
 	<description>fzte project for Spring Boot</description>
 	<properties>
