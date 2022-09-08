@@ -1,13 +1,13 @@
 package com.jiang.fzte.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 
-@RestController
+@Controller
 public class TestController {
 
-    @RequestMapping("/FromZerotoExpert")
-    public String hello() {
-        return "嗨，欢迎您来到 from zero to expert";
+    @GetMapping("/FromZerotoExpert")
+    public String FromZerotoExpert() {
+        return "FromZerotoExpert";
     }
 }
