@@ -40,7 +40,7 @@
                              targetPackage="com.jiang.fzte.mapper"
                              type="XMLMAPPER"/>
 
-                <table tableName="demo" domainObjectName="Demo"/>
+                <table tableName="user" domainObjectName="User"/>
         <!--        <table tableName="ebook"/>-->
         <!--        <table tableName="category"/>-->
 <!--        <table tableName="doc"/>-->
