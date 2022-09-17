@@ -16,9 +16,10 @@ public class UserController {
     @Resource
     private UserService userService;
 
-    @GetMapping("/testList")
-    public List<User> list() {
-        return userService.list();
+    @GetMapping("/seeALL")
+    @ResponseBody
+    public List<User> all() {
+        return userService.all();
     }
 
     @GetMapping("/FromZerotoExpert")
@@ -26,6 +27,9 @@ public class UserController {
         return "FromZerotoExpert";
     }
 
+    /**
+     * 注册接口
+     */
     @PostMapping("/register")
     @ResponseBody
     public CommonResp register(String username, String password) {

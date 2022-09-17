@@ -13,7 +13,7 @@ public class UserService {
     @Resource
     private UserMapper userMapper;
 
-    public List<User> list() {
+    public List<User> all() {
         return userMapper.selectByExample(null);
     }
 
