@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 import java.util.List;
 
 @Controller
@@ -32,11 +33,8 @@ public class UserController {
      */
     @PostMapping("/register")
     @ResponseBody
-    public CommonResp register(String username, String password) {
+    public CommonResp register(@Valid User user) {
         CommonResp<User> resp = new CommonResp<>();
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword(password);
         userService.addUser(user);
         resp.setContent(user);
         return resp;
