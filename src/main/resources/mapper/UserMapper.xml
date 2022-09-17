@@ -5,10 +5,8 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="username" jdbcType="VARCHAR" property="username" />
     <result column="password" jdbcType="CHAR" property="password" />
-    <result column="gender" jdbcType="VARCHAR" property="gender" />
-    <result column="age" jdbcType="INTEGER" property="age" />
-    <result column="hobby" jdbcType="VARCHAR" property="hobby" />
-    <result column="tel" jdbcType="VARCHAR" property="tel" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="comment" jdbcType="VARCHAR" property="comment" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -69,7 +67,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, username, `password`, gender, age, hobby, tel
+    id, username, `password`, email, `comment`
   </sql>
   <select id="selectByExample" parameterType="com.jiang.fzte.domain.UserExample" resultMap="BaseResultMap">
     select
@@ -103,11 +101,9 @@
   </delete>
   <insert id="insert" parameterType="com.jiang.fzte.domain.User">
     insert into user (id, username, `password`, 
-      gender, age, hobby, 
-      tel)
+      email, `comment`)
     values (#{id,jdbcType=BIGINT}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=CHAR}, 
-      #{gender,jdbcType=VARCHAR}, #{age,jdbcType=INTEGER}, #{hobby,jdbcType=VARCHAR}, 
-      #{tel,jdbcType=VARCHAR})
+      #{email,jdbcType=VARCHAR}, #{comment,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.jiang.fzte.domain.User">
     insert into user
@@ -121,17 +117,11 @@
       <if test="password != null">
         `password`,
       </if>
-      <if test="gender != null">
-        gender,
+      <if test="email != null">
+        email,
       </if>
-      <if test="age != null">
-        age,
-      </if>
-      <if test="hobby != null">
-        hobby,
-      </if>
-      <if test="tel != null">
-        tel,
+      <if test="comment != null">
+        `comment`,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -144,17 +134,11 @@
       <if test="password != null">
         #{password,jdbcType=CHAR},
       </if>
-      <if test="gender != null">
-        #{gender,jdbcType=VARCHAR},
+      <if test="email != null">
+        #{email,jdbcType=VARCHAR},
       </if>
-      <if test="age != null">
-        #{age,jdbcType=INTEGER},
-      </if>
-      <if test="hobby != null">
-        #{hobby,jdbcType=VARCHAR},
-      </if>
-      <if test="tel != null">
-        #{tel,jdbcType=VARCHAR},
+      <if test="comment != null">
+        #{comment,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -176,17 +160,11 @@
       <if test="record.password != null">
         `password` = #{record.password,jdbcType=CHAR},
       </if>
-      <if test="record.gender != null">
-        gender = #{record.gender,jdbcType=VARCHAR},
+      <if test="record.email != null">
+        email = #{record.email,jdbcType=VARCHAR},
       </if>
-      <if test="record.age != null">
-        age = #{record.age,jdbcType=INTEGER},
-      </if>
-      <if test="record.hobby != null">
-        hobby = #{record.hobby,jdbcType=VARCHAR},
-      </if>
-      <if test="record.tel != null">
-        tel = #{record.tel,jdbcType=VARCHAR},
+      <if test="record.comment != null">
+        `comment` = #{record.comment,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="_parameter != null">
@@ -198,10 +176,8 @@
     set id = #{record.id,jdbcType=BIGINT},
       username = #{record.username,jdbcType=VARCHAR},
       `password` = #{record.password,jdbcType=CHAR},
-      gender = #{record.gender,jdbcType=VARCHAR},
-      age = #{record.age,jdbcType=INTEGER},
-      hobby = #{record.hobby,jdbcType=VARCHAR},
-      tel = #{record.tel,jdbcType=VARCHAR}
+      email = #{record.email,jdbcType=VARCHAR},
+      `comment` = #{record.comment,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -215,17 +191,11 @@
       <if test="password != null">
         `password` = #{password,jdbcType=CHAR},
       </if>
-      <if test="gender != null">
-        gender = #{gender,jdbcType=VARCHAR},
+      <if test="email != null">
+        email = #{email,jdbcType=VARCHAR},
       </if>
-      <if test="age != null">
-        age = #{age,jdbcType=INTEGER},
-      </if>
-      <if test="hobby != null">
-        hobby = #{hobby,jdbcType=VARCHAR},
-      </if>
-      <if test="tel != null">
-        tel = #{tel,jdbcType=VARCHAR},
+      <if test="comment != null">
+        `comment` = #{comment,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
@@ -234,10 +204,8 @@
     update user
     set username = #{username,jdbcType=VARCHAR},
       `password` = #{password,jdbcType=CHAR},
-      gender = #{gender,jdbcType=VARCHAR},
-      age = #{age,jdbcType=INTEGER},
-      hobby = #{hobby,jdbcType=VARCHAR},
-      tel = #{tel,jdbcType=VARCHAR}
+      email = #{email,jdbcType=VARCHAR},
+      `comment` = #{comment,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

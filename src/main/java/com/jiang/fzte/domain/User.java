@@ -7,13 +7,9 @@ public class User {
 
     private String password;
 
-    private String gender;
+    private String email;
 
-    private Integer age;
-
-    private String hobby;
-
-    private String tel;
+    private String comment;
 
     public Long getId() {
         return id;
@@ -39,36 +35,20 @@ public class User {
         this.password = password;
     }
 
-    public String getGender() {
-        return gender;
+    public String getEmail() {
+        return email;
     }
 
-    public void setGender(String gender) {
-        this.gender = gender;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public Integer getAge() {
-        return age;
+    public String getComment() {
+        return comment;
     }
 
-    public void setAge(Integer age) {
-        this.age = age;
-    }
-
-    public String getHobby() {
-        return hobby;
-    }
-
-    public void setHobby(String hobby) {
-        this.hobby = hobby;
-    }
-
-    public String getTel() {
-        return tel;
-    }
-
-    public void setTel(String tel) {
-        this.tel = tel;
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     @Override
@@ -80,10 +60,8 @@ public class User {
         sb.append(", id=").append(id);
         sb.append(", username=").append(username);
         sb.append(", password=").append(password);
-        sb.append(", gender=").append(gender);
-        sb.append(", age=").append(age);
-        sb.append(", hobby=").append(hobby);
-        sb.append(", tel=").append(tel);
+        sb.append(", email=").append(email);
+        sb.append(", comment=").append(comment);
         sb.append("]");
         return sb.toString();
     }

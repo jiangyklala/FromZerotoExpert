@@ -1,12 +1,10 @@
 drop table if exists `user`;
 create table `user` (
-                        `id` bigint auto_increment not null comment 'id',
-                        `username` varchar(50) comment '名称',
-                        `password` char(32) comment '密码',
-                        `gender` varchar(50) default '未知' comment '性别',
-                        `age` int default -1 comment '年龄',
-                        `hobby` varchar(50) default NULL comment '爱好',
-                        `tel` varchar(50) default NULL comment '电话',
+                        `id` bigint auto_increment not null,
+                        `username` varchar(50) not null default(NULL),
+                        `password` char(32) not null default(NULL),
+                        `email` varchar(50) default(NULL),
+                        `comment` varchar(50) default(NULL),
                         primary key (`id`),
                         unique key `username_unique` (`username`)
 ) engine=innodb default charset=utf8mb4 comment='用户';
