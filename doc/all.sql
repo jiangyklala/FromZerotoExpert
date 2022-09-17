@@ -1,6 +1,6 @@
 drop table if exists `user`;
 create table `user` (
-                        `id` bigint not null comment 'id',
+                        `id` bigint auto_increment not null comment 'id',
                         `username` varchar(50) comment '名称',
                         `password` char(32) comment '密码',
                         `gender` varchar(50) default '未知' comment '性别',
@@ -10,6 +10,8 @@ create table `user` (
                         primary key (`id`),
                         unique key `username_unique` (`username`)
 ) engine=innodb default charset=utf8mb4 comment='用户';
+
+insert into `user` (id, username, password) values(1, 'jiang', 'jiang111');
 
 drop table if exists `demo`;
 create table `demo` (

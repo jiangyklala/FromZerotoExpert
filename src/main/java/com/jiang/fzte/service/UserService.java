@@ -16,4 +16,8 @@ public class UserService {
     public List<User> list() {
         return userMapper.selectByExample(null);
     }
+
+    public void add(User user) {
+        userMapper.insert(user);
+    }
 }
