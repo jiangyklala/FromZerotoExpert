@@ -17,7 +17,7 @@ public class UserService {
         return userMapper.selectByExample(null);
     }
 
-    public void add(User user) {
+    public void addUser(User user) {
         userMapper.insert(user);
     }
 }
