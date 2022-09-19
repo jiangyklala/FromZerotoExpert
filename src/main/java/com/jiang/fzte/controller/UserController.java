@@ -4,6 +4,7 @@ import com.jiang.fzte.domain.User;
 import com.jiang.fzte.resp.CommonResp;
 import com.jiang.fzte.service.UserService;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -33,7 +34,7 @@ public class UserController {
      */
     @PostMapping("/register")
     @ResponseBody
-    public CommonResp register(@Valid User user) {
+    public CommonResp register(@Validated User user) {
         CommonResp<User> resp = new CommonResp<>();
         userService.addUser(user);
         resp.setContent(user);

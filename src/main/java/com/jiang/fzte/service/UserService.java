@@ -3,6 +3,7 @@ package com.jiang.fzte.service;
 import com.jiang.fzte.domain.User;
 import com.jiang.fzte.mapper.UserMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.Resource;
 import java.util.List;

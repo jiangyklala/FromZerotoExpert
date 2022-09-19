@@ -1,14 +1,15 @@
 package com.jiang.fzte.domain;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 public class User {
     private Long id;
 
-    @NotNull(message = "名称不能为空")
+    @NotBlank(message = "名称不能为空")
     private String username;
 
-    @NotNull(message = "密码不能为空")
+    @NotBlank(message = "密码不能为空")
     private String password;
 
     private String email;
