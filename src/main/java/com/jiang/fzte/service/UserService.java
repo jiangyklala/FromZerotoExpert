@@ -1,6 +1,7 @@
 package com.jiang.fzte.service;
 
 import com.jiang.fzte.domain.User;
+import com.jiang.fzte.mapper.Disallow_wordMapper;
 import com.jiang.fzte.mapper.UserMapper;
 import com.jiang.fzte.resp.CommonResp;
 import com.jiang.fzte.util.PasswordLimit;
@@ -17,6 +18,9 @@ public class UserService {
     @Resource
     private UserMapper userMapper;
 
+    @Resource
+    private Disallow_wordService disallow_wordService;
+
     public List<User> all() {
         return userMapper.selectByExample(null);
     }
@@ -27,7 +31,8 @@ public class UserService {
      * @param resp 传入最终返回结果类的引用, 进行修改
      */
     public void isUserName(String userName, CommonResp resp) {
-        switch (UserNameLimit.userNameLimit(userName)) {
+
+        switch (UserNameLimit.userNameLimit(userName, disallow_wordService.all())) {
             case 1 -> {
                 resp.setSuccess(false);
                 resp.setMessage(resp.getMessage() + "含有敏感词; ");  // 原有的信息也不要丢

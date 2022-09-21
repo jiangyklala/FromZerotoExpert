@@ -16,8 +16,7 @@ create table `user` (
                         `password` char(32) not null default(NULL),
                         `email` varchar(50) default(NULL),
                         `comment` varchar(50) default(NULL),
-                        primary key (`id`),
-                        unique key `username_unique` (`username`)
+                        primary key (`id`)
 ) engine=innodb default charset=utf8mb4 comment='用户';
 
 insert into `user` (id, username, password) values(1, 'jiang', 'jiang111');
@@ -35,4 +34,5 @@ insert into disallow_word(value) values ('尼玛');
 insert into disallow_word(value) values ('站长');
 insert into disallow_word(value) values ('国家领导人');
 insert into disallow_word(value) values ('操');
+insert into disallow_word(value) values ('lala');
 
