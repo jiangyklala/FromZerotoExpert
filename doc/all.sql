@@ -1,3 +1,14 @@
+drop table if exists `demo`;
+create table `demo` (
+                        `id` bigint not null comment 'id',
+                        `name` varchar(50) comment '名称',
+                        primary key (`id`)
+) engine=innodb default charset=utf8mb4 comment='测试';
+
+insert into `demo` (id, name) values (1, '测试');
+
+
+
 drop table if exists `user`;
 create table `user` (
                         `id` bigint auto_increment not null,
@@ -11,12 +22,17 @@ create table `user` (
 
 insert into `user` (id, username, password) values(1, 'jiang', 'jiang111');
 
-drop table if exists `demo`;
-create table `demo` (
-                        `id` bigint not null comment 'id',
-                        `name` varchar(50) comment '名称',
-                        primary key (`id`)
-) engine=innodb default charset=utf8mb4 comment='测试';
 
-insert into `demo` (id, name) values (1, '测试');
+drop table if exists `disallow_word`;
+create table `disallow_word` (
+                                 `id` bigint auto_increment not null,
+                                 `value` varchar(50) not null comment '敏感字',
+                                 `type` int default(0) comment '类型',
+                                 primary key (`id`)
+) engine=innodb default charset=utf8mb4 comment='敏感词库';
+
+insert into disallow_word(value) values ('尼玛');
+insert into disallow_word(value) values ('站长');
+insert into disallow_word(value) values ('国家领导人');
+insert into disallow_word(value) values ('操');
 
