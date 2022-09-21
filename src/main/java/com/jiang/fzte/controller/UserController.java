@@ -3,6 +3,7 @@ package com.jiang.fzte.controller;
 import com.jiang.fzte.domain.User;
 import com.jiang.fzte.resp.CommonResp;
 import com.jiang.fzte.service.UserService;
+import com.jiang.fzte.util.PasswordLimit;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -36,8 +37,13 @@ public class UserController {
     @ResponseBody
     public CommonResp register(@Validated User user) {
         CommonResp<User> resp = new CommonResp<>();
-        userService.addUser(user);
-        resp.setContent(user);
+        if (PasswordLimit.passWordLimit(user.getUsername()) != 0) {
+            resp.setSuccess(false);
+            resp.setMessage("敏感词");
+        } else {
+            userService.addUser(user);
+            resp.setContent(user);
+        }
         return resp;
     }
 }

@@ -2,6 +2,7 @@ package com.jiang.fzte.service;
 
 import com.jiang.fzte.domain.User;
 import com.jiang.fzte.mapper.UserMapper;
+import com.jiang.fzte.util.PasswordLimit;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
