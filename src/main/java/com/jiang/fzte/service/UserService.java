@@ -1,6 +1,7 @@
 package com.jiang.fzte.service;
 
 import com.jiang.fzte.domain.User;
+import com.jiang.fzte.domain.UserExample;
 import com.jiang.fzte.mapper.Disallow_wordMapper;
 import com.jiang.fzte.mapper.UserMapper;
 import com.jiang.fzte.resp.CommonResp;
@@ -32,16 +33,23 @@ public class UserService {
      */
     public void isUserName(String userName, CommonResp resp) {
 
-        switch (UserNameLimit.userNameLimit(userName, disallow_wordService.all())) {
+        // 判断用户名唯一
+        UserExample userExample = new UserExample();
+        if (null != UserNameLimit.userNameOnly(userName, userExample, userMapper)) {
+            resp.setSuccess(false);
+            resp.setMessage(resp.getMessage() + "用户名重复");
+        }
+        // 判断敏感词
+        switch (UserNameLimit.userNamePolite(userName, disallow_wordService.all())) {
             case 1 -> {
                 resp.setSuccess(false);
                 resp.setMessage(resp.getMessage() + "含有敏感词; ");  // 原有的信息也不要丢
             }
-            case 0 -> {
-                if (resp.isSuccess()) {  // 是否已经是 false 了??
-                    resp.setMessage(resp.getMessage() + "昵称符合限制; ");
-                }
-            }
+//            case 0 -> {
+//                if (resp.isSuccess()) {  // 是否已经是 false 了??
+//                    resp.setMessage(resp.getMessage() + "昵称符合限制; ");
+//                }
+//            }
         }
     }
 
@@ -64,11 +72,11 @@ public class UserService {
                 resp.setSuccess(false);
                 resp.setMessage(resp.getMessage() + "密码长度只能在 6 - 16 位; ");
             }
-            case 0 -> {
-                if (resp.isSuccess()) {
-                    resp.setMessage(resp.getMessage() + "密码符合限制; ");
-                }
-            }
+//            case 0 -> {
+//                if (resp.isSuccess()) {
+//                    resp.setMessage(resp.getMessage() + "密码符合限制; ");
+//                }
+//            }
         }
     }
 
