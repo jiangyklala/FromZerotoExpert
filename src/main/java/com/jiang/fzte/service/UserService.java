@@ -26,7 +26,7 @@ public class UserService {
     }
 
     /**
-     *
+     * 用户名是否符合限制
      * @param userName
      * @param resp 传入最终返回结果类的引用, 进行修改
      */
@@ -72,7 +72,13 @@ public class UserService {
         }
     }
 
-    public void addUser(User user) {
-        userMapper.insert(user);
+    public void addUser(User user, CommonResp<User> resp) {
+        if (userMapper.insert(user) != 0) {
+            resp.setMessage(resp.getMessage() + "用户添加成功");
+            resp.setContent(user);
+        } else {
+            resp.setSuccess(false);
+            resp.setMessage(resp.getMessage() + "用户插入失败");
+        }
     }
 }

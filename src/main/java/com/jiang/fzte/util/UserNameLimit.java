@@ -18,7 +18,6 @@ public class UserNameLimit {
      */
     public static int userNameLimit(String userName, List<String> impolitePhrases) {
 
-
         // 敏感词判断
         Trie root = new Trie();
         for (String s : impolitePhrases) {

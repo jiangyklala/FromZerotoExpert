@@ -40,8 +40,7 @@ public class UserController {
         userService.isUserName(user.getUsername(), resp);
         userService.isPassword(user.getPassword(), resp);
         if (resp.isSuccess()) {
-            userService.addUser(user);
-            resp.setContent(user);
+            userService.addUser(user, resp);
         }
         return resp;
     }

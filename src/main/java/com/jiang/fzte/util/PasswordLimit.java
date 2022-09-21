@@ -14,8 +14,6 @@ public class PasswordLimit {
      */
     public static int passWordLimit(String password) {
 
-
-
         // 长度判断
         if (password.length() < 6 || password.length() > 16) {
             return 1;
