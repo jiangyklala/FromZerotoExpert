@@ -6,10 +6,12 @@ import com.jiang.fzte.mapper.Disallow_wordMapper;
 import com.jiang.fzte.mapper.UserMapper;
 import com.jiang.fzte.resp.CommonResp;
 import com.jiang.fzte.util.PasswordLimit;
+import com.jiang.fzte.util.Trie;
 import com.jiang.fzte.util.UserNameLimit;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.List;
 
@@ -21,6 +23,17 @@ public class UserService {
 
     @Resource
     private Disallow_wordService disallow_wordService;
+
+    private Trie root;
+
+    @PostConstruct
+    public void init() {
+        List<String> impolitePhrases = disallow_wordService.all();
+        root = new Trie();
+        for (String s : impolitePhrases) {
+            root.insert(s);
+        }
+    }
 
     public List<User> all() {
         return userMapper.selectByExample(null);
@@ -37,10 +50,10 @@ public class UserService {
         UserExample userExample = new UserExample();
         if (null != UserNameLimit.userNameOnly(userName, userExample, userMapper)) {
             resp.setSuccess(false);
-            resp.setMessage(resp.getMessage() + "用户名重复");
+            resp.setMessage(resp.getMessage() + "用户名重复; ");
         }
         // 判断敏感词
-        switch (UserNameLimit.userNamePolite(userName, disallow_wordService.all())) {
+        switch (UserNameLimit.userNamePolite(userName, root)) {
             case 1 -> {
                 resp.setSuccess(false);
                 resp.setMessage(resp.getMessage() + "含有敏感词; ");  // 原有的信息也不要丢

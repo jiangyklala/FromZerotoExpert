@@ -2,15 +2,9 @@ package com.jiang.fzte.util;
 
 import com.jiang.fzte.domain.User;
 import com.jiang.fzte.domain.UserExample;
-import com.jiang.fzte.mapper.Disallow_wordMapper;
 import com.jiang.fzte.mapper.UserMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 public class UserNameLimit {
@@ -20,13 +14,8 @@ public class UserNameLimit {
      * @param userName
      * @return 0 - 昵称符合; 1 - 含有敏感词
      */
-    public static int userNamePolite(String userName, List<String> impolitePhrases) {
+    public static int userNamePolite(String userName, Trie root) {
 
-        // 敏感词判断
-        Trie root = new Trie();
-        for (String s : impolitePhrases) {
-            root.insert(s);
-        }
         if (root.check(userName, root)) {  // 传入敏感词Trie
             return 1;
         }
