@@ -37,10 +37,9 @@ public class UserController {
     @ResponseBody
     public CommonResp register(@Validated User user) {
         CommonResp<User> resp = new CommonResp<>();
-        if (PasswordLimit.passWordLimit(user.getUsername()) != 0) {
-            resp.setSuccess(false);
-            resp.setMessage("敏感词");
-        } else {
+        userService.isUserName(user.getUsername(), resp);
+        userService.isPassword(user.getPassword(), resp);
+        if (resp.isSuccess()) {
             userService.addUser(user);
             resp.setContent(user);
         }

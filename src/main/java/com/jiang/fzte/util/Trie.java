@@ -7,12 +7,13 @@ public class Trie {
     private HashMap<Character, Trie> children;
     private boolean isEnd;
 
+    // 每个Trie的数据内容为上一个Trie的children，自身是否为end是当前自己的 isEnd标志
     public Trie() {
         children = new HashMap<Character, Trie>();
         isEnd = false;
     }
 
-    public void insert(String singleWord) {
+    public void insert(String singleWord) {   // 先插入后匹配
         Trie node = this;
         for (int i = 0; i < singleWord.length(); ++i) {
             char ch = singleWord.charAt(i);
@@ -24,20 +25,7 @@ public class Trie {
                 node.isEnd = true;
             }
         }
-
     }
-//
-//    public Trie search(String target) {
-//        Trie node = this;
-//        for (int i = 0; i < target.length(); ++i) {
-//            char ch = target.charAt(i);
-//            if (!node.children.containsKey(ch)) {
-//                return null;
-//            }
-//            node = node.children.get(ch);
-//        }
-//        return node;
-//    }
 
     /**
      *  检测整串昵称是否含有敏感词汇
@@ -62,7 +50,7 @@ public class Trie {
                                 return true;
                             }
                         } else {
-                            break;
+                            break;   // 匹配中断后中返回p1继续往后匹配
                         }
                     }
                 }
