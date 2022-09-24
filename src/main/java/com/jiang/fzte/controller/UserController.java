@@ -36,7 +36,7 @@ public class UserController {
      */
     @PostMapping("/register")
     @ResponseBody
-    public CommonResp register(@Validated User user) {
+    public CommonResp<User> register(@Validated User user) {
         CommonResp<User> resp = new CommonResp<>();
         userService.isUserName(user.getUsername(), resp);
         userService.isPassword(user.getPassword(), resp);

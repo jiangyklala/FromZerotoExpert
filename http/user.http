@@ -3,3 +3,13 @@ GET http://localhost:8088/user/list
 ###
 
 POST http://localhost:8088/user/register?username=jiang1&password=123
+
+###
+
+POST http://localhost:8088/disallowWord/add?value=lala
+
+###
+
+POST http://localhost:8088/disallowWord/delete?value=lala
+
+###

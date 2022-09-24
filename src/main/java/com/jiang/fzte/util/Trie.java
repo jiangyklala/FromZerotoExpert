@@ -1,5 +1,7 @@
 package com.jiang.fzte.util;
 
+import com.jiang.fzte.service.Disallow_wordService;
+
 import java.util.HashMap;
 
 public class Trie {
@@ -13,8 +15,8 @@ public class Trie {
         isEnd = false;
     }
 
-    public void insert(String singleWord) {   // 先插入后匹配
-        Trie node = this;
+    public void insert(String singleWord, Trie root) {
+        Trie node = root;
         for (int i = 0; i < singleWord.length(); ++i) {
             char ch = singleWord.charAt(i);
             if (!node.children.containsKey(ch)) {
@@ -88,8 +90,8 @@ public class Trie {
 
     public static void main(String[] args) {
         Trie root = new Trie();
-        root.insert("abcde");
-        root.insert("abcf");
+        root.insert("abcde", Disallow_wordService.root);
+        root.insert("abcf", Disallow_wordService.root);
         if (root.check("abcde", root) != null) {
             System.out.println("找到了");
         }
