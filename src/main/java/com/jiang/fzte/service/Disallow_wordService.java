@@ -15,7 +15,7 @@ public class Disallow_wordService {
     @Resource
     private Disallow_wordMapper disallow_wordMapper;
 
-    public List<String> all() {
+    public List<String> selectValue() {
         List<Disallow_word> disallow_wordList = disallow_wordMapper.selectByExample(null);
         List<String> impolitePhrases = new ArrayList<>();
         for (Disallow_word disallow_word : disallow_wordList) {
