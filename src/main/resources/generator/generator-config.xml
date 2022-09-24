@@ -40,7 +40,8 @@
                              targetPackage="com.jiang.fzte.mapper"
                              type="XMLMAPPER"/>
 
-                <table tableName="disallow_word" domainObjectName="Disallow_word"/>
+                <table tableName="user" domainObjectName="User"/>
+<!--                <table tableName="disallow_word" domainObjectName="Disallow_word"/>-->
         <!--        <table tableName="ebook"/>-->
         <!--        <table tableName="category"/>-->
 <!--        <table tableName="doc"/>-->

@@ -4,6 +4,7 @@ import com.jiang.fzte.domain.User;
 import com.jiang.fzte.resp.CommonResp;
 import com.jiang.fzte.service.UserService;
 import com.jiang.fzte.util.PasswordLimit;
+import com.jiang.fzte.util.SnowFlakeIdWorker;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +41,7 @@ public class UserController {
         userService.isUserName(user.getUsername(), resp);
         userService.isPassword(user.getPassword(), resp);
         if (resp.isSuccess()) {
+            userService.encryptPassword(user, userService.setSalt(user));  // 设置盐值并密码加密
             userService.addUser(user, resp);
         }
         return resp;

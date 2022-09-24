@@ -2,14 +2,11 @@ package com.jiang.fzte.service;
 
 import com.jiang.fzte.domain.User;
 import com.jiang.fzte.domain.UserExample;
-import com.jiang.fzte.mapper.Disallow_wordMapper;
 import com.jiang.fzte.mapper.UserMapper;
 import com.jiang.fzte.resp.CommonResp;
-import com.jiang.fzte.util.PasswordLimit;
-import com.jiang.fzte.util.Trie;
-import com.jiang.fzte.util.UserNameLimit;
+import com.jiang.fzte.util.*;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.util.DigestUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -28,7 +25,7 @@ public class UserService {
 
     @PostConstruct
     public void init() {
-        List<String> impolitePhrases = disallow_wordService.all();
+        List<String> impolitePhrases = disallow_wordService.selectValue();
         root = new Trie();
         for (String s : impolitePhrases) {
             root.insert(s);
@@ -91,6 +88,23 @@ public class UserService {
 //                }
 //            }
         }
+    }
+
+    public void encryptPassword(User user, String salt) {
+        // 传入密码长度作为盐值置乱种子
+        user.setPassword(Md5Encrypt.mdtEncrypt(user.getPassword(), salt, (long) user.getPassword().length()));
+    }
+
+    /**
+     * 使用雪花算法设置盐值
+     * @param user
+     * @return
+     */
+    public String setSalt(User user) {
+        SnowFlakeIdWorker snowFlakeIdWorker = new SnowFlakeIdWorker(0, 0);
+        String salt = Long.toString(snowFlakeIdWorker.nextId());
+        user.setSalt(salt);
+        return salt;
     }
 
     public void addUser(User user, CommonResp<User> resp) {

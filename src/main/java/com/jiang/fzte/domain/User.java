@@ -1,20 +1,17 @@
 package com.jiang.fzte.domain;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
 public class User {
     private Long id;
 
-    @NotBlank(message = "名称不能为空")
     private String username;
 
-    @NotBlank(message = "密码不能为空")
     private String password;
 
     private String email;
 
     private String comment;
+
+    private String salt;
 
     public Long getId() {
         return id;
@@ -56,6 +53,14 @@ public class User {
         this.comment = comment;
     }
 
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -67,6 +72,7 @@ public class User {
         sb.append(", password=").append(password);
         sb.append(", email=").append(email);
         sb.append(", comment=").append(comment);
+        sb.append(", salt=").append(salt);
         sb.append("]");
         return sb.toString();
     }

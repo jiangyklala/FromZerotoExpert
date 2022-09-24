@@ -16,7 +16,7 @@ public class UserNameLimit {
      */
     public static int userNamePolite(String userName, Trie root) {
 
-        if (root.check(userName, root)) {  // 传入敏感词Trie
+        if (root.check(userName, root) != null) {  // 传入敏感词Trie
             return 1;
         }
         return 0;

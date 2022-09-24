@@ -36,3 +36,6 @@ insert into disallow_word(value) values ('国家领导人');
 insert into disallow_word(value) values ('操');
 insert into disallow_word(value) values ('lala');
 
+
+alter table user add salt varchar(225) default(NULL);
+
