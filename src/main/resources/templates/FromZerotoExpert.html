@@ -1,18 +1,20 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
-    <title>注册</title>
-<!--    识别js文件默认从static下开始, th:src记得加'/'-->
+    <title>首页</title>
+    <!--    识别js文件默认从static下开始, th:src记得加'/'-->
     <script type="text/javascript" src="js/welcome.js" th:src="@{/js/welcome.js}"></script>
 </head>
 <body>
 
-<form action="/user/register" method="post">
-    用户名:<input name="username"></br>
-      密码:<input name="password"></br>
-    <input type="submit" value="提交">
-</form>
+<br>
+<a href="/user/Login">
+    <button>登录</button>
+</a><br>
+<a href="/user/Register">
+    <button>注册</button>
+</a>
 
 </body>
 </html>
