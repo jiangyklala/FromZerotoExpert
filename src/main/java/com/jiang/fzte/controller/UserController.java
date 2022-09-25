@@ -20,7 +20,7 @@ public class UserController {
      */
     @PostMapping("/Register")
     @ResponseBody
-    public CommonResp<User> register(User user) {
+    public String register(User user) {
         CommonResp<User> resp = new CommonResp<>();
         userService.isRegisterUserName(user.getUsername(), resp);
         userService.isRegisterPassword(user.getPassword(), resp);
@@ -28,7 +28,7 @@ public class UserController {
             userService.encryptPassword(user, userService.setSalt(user));  // 设置盐值并密码加密
             userService.addUser(user, resp);
         }
-        return resp;
+        return resp.getMessage();
     }
 
     /**
