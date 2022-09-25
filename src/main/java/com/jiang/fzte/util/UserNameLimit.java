@@ -32,13 +32,10 @@ public class UserNameLimit {
     }
 
     /**
-     * 用户名唯一限制
-     * @param userName
-     * @param userExample
-     * @param userMapper
-     * @return
+     * 根据 userName 查找是否存在这个 user
+     * @return 是 - 返回 user 对象; 否 - 返回 null
      */
-    public static User userNameOnly(String userName, UserExample userExample, UserMapper userMapper) {
+    public static User existAUser(String userName, UserExample userExample, UserMapper userMapper) {
         UserExample.Criteria criteria = userExample.createCriteria();
         criteria.andUsernameEqualTo(userName);
         List<User> userList = userMapper.selectByExample(userExample);  // 此处虽然只有一条也只能用List<User>接受
@@ -47,6 +44,17 @@ public class UserNameLimit {
         } else {
             return userList.get(0);
         }
+    }
+
+    /**
+     * 一定要确保需要返回的 user 存在!!! 根据 userName 返回这个 user
+     * @return 是 - 返回 user 对象; 否 - 返回 null
+     */
+    public static User selectAUser(String userName, UserExample userExample, UserMapper userMapper) {
+        UserExample.Criteria criteria = userExample.createCriteria();
+        criteria.andUsernameEqualTo(userName);
+        List<User> userList = userMapper.selectByExample(userExample);  // 此处虽然只有一条也只能用List<User>接受
+        return userList.get(0);
     }
 
 }

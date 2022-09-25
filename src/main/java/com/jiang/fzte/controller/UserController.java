@@ -3,15 +3,10 @@ package com.jiang.fzte.controller;
 import com.jiang.fzte.domain.User;
 import com.jiang.fzte.resp.CommonResp;
 import com.jiang.fzte.service.UserService;
-import com.jiang.fzte.util.PasswordLimit;
-import com.jiang.fzte.util.SnowFlakeIdWorker;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.validation.Valid;
-import java.util.List;
 
 @Controller
 @RequestMapping("user")
@@ -27,8 +22,8 @@ public class UserController {
     @ResponseBody
     public CommonResp<User> register(User user) {
         CommonResp<User> resp = new CommonResp<>();
-        userService.isUserName(user.getUsername(), resp);
-        userService.isPassword(user.getPassword(), resp);
+        userService.isRegisterUserName(user.getUsername(), resp);
+        userService.isRegisterPassword(user.getPassword(), resp);
         if (resp.isSuccess()) {
             userService.encryptPassword(user, userService.setSalt(user));  // 设置盐值并密码加密
             userService.addUser(user, resp);
@@ -43,6 +38,11 @@ public class UserController {
     @ResponseBody
     public CommonResp<User> login(User user) {
         CommonResp<User> resp = new CommonResp<>();
+        userService.isLoginUserName(user.getUsername(), resp);
+        userService.isLoginPassword(user, resp);  // 这里需要传入user, 获取其用户名和密码
+        if (resp.isSuccess()) {
+            fromZerotoExpert();
+        }
         return resp;
     }
 
