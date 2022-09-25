@@ -34,12 +34,19 @@ public class UserService {
      */
     public void isUserName(String userName, CommonResp resp) {
 
+        //判断用户名是否有空格
+        if (UserNameLimit.userNameSpace(userName)) {
+            resp.setSuccess(false);
+            resp.setMessage(resp.getMessage() + "用户名中不能含有空格; ");
+        }
+
         // 判断用户名唯一
         UserExample userExample = new UserExample();
         if (null != UserNameLimit.userNameOnly(userName, userExample, userMapper)) {
             resp.setSuccess(false);
             resp.setMessage(resp.getMessage() + "用户名重复; ");
         }
+
         // 判断敏感词
         switch (UserNameLimit.userNamePolite(userName, Disallow_wordService.root)) {
             case 1 -> {

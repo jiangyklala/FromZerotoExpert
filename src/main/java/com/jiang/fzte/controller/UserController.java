@@ -20,21 +20,10 @@ public class UserController {
     @Resource
     private UserService userService;
 
-    @GetMapping("/seeALL")
-    @ResponseBody
-    public List<User> all() {
-        return userService.all();
-    }
-
-    @GetMapping("/FromZerotoExpert")
-    public String FromZerotoExpert() {
-        return "FromZerotoExpert";
-    }
-
     /**
      * 注册接口
      */
-    @PostMapping("/register")
+    @PostMapping("/Register")
     @ResponseBody
     public CommonResp<User> register(@Validated User user) {
         CommonResp<User> resp = new CommonResp<>();
@@ -45,5 +34,39 @@ public class UserController {
             userService.addUser(user, resp);
         }
         return resp;
+    }
+
+    /**
+     * 登录接口
+     */
+    @PostMapping("/Login")
+    @ResponseBody
+    public CommonResp<User> login(@Validated User user) {
+        CommonResp<User> resp = new CommonResp<>();
+        return resp;
+    }
+
+    /**
+     * 首页
+     */
+    @GetMapping("/FromZerotoExpert")
+    public String fromZerotoExpert() {
+        return "FromZerotoExpert";
+    }
+
+    /**
+     * 注册
+     */
+    @GetMapping("/Register")
+    public String register() {
+        return "register";
+    }
+
+    /**
+     * 登录
+     */
+    @GetMapping("/Login")
+    public String login() {
+        return "login";
     }
 }

@@ -9,6 +9,15 @@ import java.util.List;
 
 public class UserNameLimit {
 
+    public static  boolean userNameSpace(String userName) {
+        for (char c : userName.toCharArray()) {
+            if (c == ' ') {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * 敏感词限制
      * @param userName
