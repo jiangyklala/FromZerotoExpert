@@ -36,14 +36,15 @@ public class UserController {
      */
     @PostMapping("/Login")
     @ResponseBody
-    public CommonResp<User> login(User user) {
+    public String login(User user) {
         CommonResp<User> resp = new CommonResp<>();
         userService.isLoginUserName(user.getUsername(), resp);
         userService.isLoginPassword(user, resp);  // 这里需要传入user, 获取其用户名和密码
         if (resp.isSuccess()) {
-            fromZerotoExpert();
+            return "true";
+        } else {
+            return resp.getMessage();
         }
-        return resp;
     }
 
     /**
