@@ -25,7 +25,7 @@ public class UserController {
      */
     @PostMapping("/Register")
     @ResponseBody
-    public CommonResp<User> register(@Validated User user) {
+    public CommonResp<User> register(User user) {
         CommonResp<User> resp = new CommonResp<>();
         userService.isUserName(user.getUsername(), resp);
         userService.isPassword(user.getPassword(), resp);
@@ -41,7 +41,7 @@ public class UserController {
      */
     @PostMapping("/Login")
     @ResponseBody
-    public CommonResp<User> login(@Validated User user) {
+    public CommonResp<User> login(User user) {
         CommonResp<User> resp = new CommonResp<>();
         return resp;
     }
