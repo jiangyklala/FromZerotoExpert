@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 
 @Controller
-@RequestMapping("user")
 public class UserController {
 
     @Resource
@@ -20,7 +19,7 @@ public class UserController {
      */
     @PostMapping("/Register")
     @ResponseBody
-    public String register(User user) {
+    public CommonResp<User> register(User user) {
         CommonResp<User> resp = new CommonResp<>();
         userService.isRegisterUserName(user.getUsername(), resp);
         userService.isRegisterPassword(user.getPassword(), resp);
@@ -28,7 +27,7 @@ public class UserController {
             userService.encryptPassword(user, userService.setSalt(user));  // 设置盐值并密码加密
             userService.addUser(user, resp);
         }
-        return resp.getMessage();
+        return resp;
     }
 
     /**
@@ -36,15 +35,11 @@ public class UserController {
      */
     @PostMapping("/Login")
     @ResponseBody
-    public String login(User user) {
+    public CommonResp<User> login(User user) {
         CommonResp<User> resp = new CommonResp<>();
         userService.isLoginUserName(user.getUsername(), resp);
         userService.isLoginPassword(user, resp);  // 这里需要传入user, 获取其用户名和密码
-        if (resp.isSuccess()) {
-            return "true";
-        } else {
-            return resp.getMessage();
-        }
+        return resp;
     }
 
     /**

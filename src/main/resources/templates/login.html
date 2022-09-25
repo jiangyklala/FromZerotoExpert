@@ -5,15 +5,18 @@
     <title>登录</title>
 <!--    注意顺序-->
     <script type="text/javascript" src="/js/jquery/jquery.js" th:src="@{/js/jquery/jquery.js}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.3.0/jquery.form.min.js" integrity="sha384-qlmct0AOBiA2VPZkMY3+2WqkHtIQ9lSdAsAn5RUJD/3vA5MKDgSGcdmIv4ycVxyn" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="/js/jquery/http_cdnjs.cloudflare.com_ajax_libs_jquery.form_4.3.0_jquery.form.js" th:src="@{/js/jquery/http_cdnjs.cloudflare.com_ajax_libs_jquery.form_4.3.0_jquery.form.js}"></script>
     <script type="text/javascript" src="/js/login.js" th:src="@{/js/login.js}"></script>
 </head>
 <body>
-
-<form id="login" action="/user/Login" method="post">
+<h1>登录</h1>
+<form id="login" action="/Login" method="post">
     用户名:<input name="username" required="required"></br>
     密码:<input name="password" required="required"></br>
     <input type="submit" value="登录">
 </form>
+<a href="/Register">
+    <button>去注册</button>
+</a>
 </body>
 </html>
