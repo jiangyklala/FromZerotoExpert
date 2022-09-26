@@ -12,9 +12,9 @@ import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Objects;
 
@@ -36,23 +36,31 @@ public class UserService {
         jedis.select(1);
     }
 
+    @PreDestroy
+    public void end() {
+        jedis.close();
+    }
+
     /**
      * 更新用户登录凭证
      * @param sessionId Cookie 中 "fzteUser" 的值
      */
-    public void updateLoginCert(String sessionId, HttpServletResponse response) {
+    public boolean updateLoginCert(String sessionId, HttpServletResponse response) {
         // 更新 sessionId
-        jedis.expire("u:" + sessionId + ":uN", 60 * 60 * 24); // 有个漏洞: 进入到此方法的前提是用户输入对了密码, 但是有可能用户自己把 Cookie 的时间延长了, 导致redis中 sessionId 失效, 使此处的 expire 语句失败, 导致最终登陆成功后没有设置 sessionId
+        if (jedis.expire("u:" + sessionId + ":uN", 60 * 60 * 24) == 0) {
+            return false;
+        }
         // 更新 Cookie
         Cookie cookie = new Cookie("fzteUser", sessionId);
         cookie.setMaxAge(60 * 60 * 24);
         response.addCookie(cookie);
+        return true;
     }
 
     /**
      * 添加用户登录凭证
      */
-    public void addLoginCert(User user, HttpServletRequest request, HttpServletResponse response) {
+    public void addLoginCert(String userName, HttpServletResponse response) {
         // 设置sessionID
         String sessionId = Long.toString(new SnowFlakeIdWorker(0, 0).nextId());
         // 创建Cookie
@@ -60,7 +68,7 @@ public class UserService {
         cookie.setMaxAge(60 * 60 * 24);
         response.addCookie(cookie);
         // redis中添加
-        jedis.setex("u:" + sessionId + ":uN", 60 * 60 * 24, user.getUsername());  // user:sessionId:userName
+        jedis.setex("u:" + sessionId + ":uN", 60 * 60 * 24, userName);  // user:sessionId:userName
     }
 
     /**

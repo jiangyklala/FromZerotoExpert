@@ -45,10 +45,9 @@ public class UserController {
         userService.isLoginPassword(user, resp);  // 这里需要传入user, 获取其用户名和密码
         if (resp.isSuccess()) {
             // 登陆成功, 添加或者更新登录凭证
-            if (sessionId != null) {
-                userService.updateLoginCert(sessionId, response);
-            } else {
-                userService.addLoginCert(user, request, response);
+            if (sessionId != null && !userService.updateLoginCert(sessionId, response)) {
+                // 在无Cookie记录, 或者更新登录凭证失败时, 重现添加新的登录凭证
+                userService.addLoginCert(user.getUsername(), response);
             }
         }
         return resp;
