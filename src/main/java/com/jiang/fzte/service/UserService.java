@@ -33,8 +33,25 @@ public class UserService {
     public void init() {
         jedis = new Jedis("124.223.184.187", 6379);
         jedis.auth("jiang");
+        jedis.select(1);
     }
 
+    /**
+     * 更新用户登录凭证
+     * @param sessionId Cookie 中 "fzteUser" 的值
+     */
+    public void updateLoginCert(String sessionId, HttpServletResponse response) {
+        // 更新 sessionId
+        jedis.expire("u:" + sessionId + ":uN", 60 * 60 * 24); // 有个漏洞: 进入到此方法的前提是用户输入对了密码, 但是有可能用户自己把 Cookie 的时间延长了, 导致redis中 sessionId 失效, 使此处的 expire 语句失败, 导致最终登陆成功后没有设置 sessionId
+        // 更新 Cookie
+        Cookie cookie = new Cookie("fzteUser", sessionId);
+        cookie.setMaxAge(60 * 60 * 24);
+        response.addCookie(cookie);
+    }
+
+    /**
+     * 添加用户登录凭证
+     */
     public void addLoginCert(User user, HttpServletRequest request, HttpServletResponse response) {
         // 设置sessionID
         String sessionId = Long.toString(new SnowFlakeIdWorker(0, 0).nextId());

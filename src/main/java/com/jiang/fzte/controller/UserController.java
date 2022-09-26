@@ -39,11 +39,18 @@ public class UserController {
      */
     @PostMapping("/Login")
     @ResponseBody
-    public CommonResp<User> login(User user,  HttpServletRequest request, HttpServletResponse response) {
+    public CommonResp<User> login(@CookieValue(value = "fzteUser", required = false) String sessionId, User user,  HttpServletRequest request, HttpServletResponse response) {
         CommonResp<User> resp = new CommonResp<>();
         userService.isLoginUserName(user.getUsername(), resp);
         userService.isLoginPassword(user, resp);  // 这里需要传入user, 获取其用户名和密码
-        userService.addLoginCert(user, request, response);
+        if (resp.isSuccess()) {
+            // 登陆成功, 添加或者更新登录凭证
+            if (sessionId != null) {
+                userService.updateLoginCert(sessionId, response);
+            } else {
+                userService.addLoginCert(user, request, response);
+            }
+        }
         return resp;
     }
 
@@ -51,7 +58,7 @@ public class UserController {
     @ResponseBody
     public CommonResp<String> welcome(@CookieValue(value = "fzteUser", required = false) String sessionId) {
         CommonResp<String> resp = new CommonResp<>();
-        if (sessionId == null || Objects.equals(userService.jedis.get("u:" + sessionId + ":uN"), "nil")) {
+        if (sessionId == null || Objects.equals(userService.jedis.get("u:" + sessionId + ":uN"), null)) {
             resp.setSuccess(false);
         }
         resp.setContent(userService.jedis.get("u:" + sessionId + ":uN"));

@@ -3,7 +3,7 @@ $.ajax({
     method: 'get',
     success: function (res) {
         if (res.success === true) {
-            document.write("<h2>嗨," + res.content + ", 欢迎您来到 from zero to expert");
+            document.write("<h2>嗨, " + res.content + ", 欢迎您来到 from zero to expert");
         } else {
             window.location.href = "/Login";
         }

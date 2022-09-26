@@ -7,8 +7,7 @@ public class RedisTest {
     public static void main(String[] args) {
         try (Jedis jedis = new Jedis("124.223.184.187", 6379)) {
             jedis.auth("jiang");
-            String pong = jedis.ping();
-            System.out.println("Redis 连接成功" + pong);
+            System.out.println(jedis.get("u:97367228315336704:uN"));
         } catch (Exception e) {
             e.printStackTrace();
         }
