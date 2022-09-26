@@ -65,7 +65,6 @@
 			<artifactId>jedis</artifactId>
 			<version>4.2.3</version>
 		</dependency>
-
 <!--		集成jQuery-->
 		<dependency>
 			<groupId>org.webjars</groupId>

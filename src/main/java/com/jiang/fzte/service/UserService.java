@@ -9,8 +9,13 @@ import com.jiang.fzte.util.PasswordLimit;
 import com.jiang.fzte.util.SnowFlakeIdWorker;
 import com.jiang.fzte.util.UserNameLimit;
 import org.springframework.stereotype.Service;
+import redis.clients.jedis.Jedis;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Objects;
 
 @Service
@@ -21,6 +26,25 @@ public class UserService {
 
     @Resource
     private Disallow_wordService disallow_wordService;
+
+    public Jedis jedis;
+
+    @PostConstruct
+    public void init() {
+        jedis = new Jedis("124.223.184.187", 6379);
+        jedis.auth("jiang");
+    }
+
+    public void addLoginCert(User user, HttpServletRequest request, HttpServletResponse response) {
+        // 设置sessionID
+        String sessionId = Long.toString(new SnowFlakeIdWorker(0, 0).nextId());
+        // 创建Cookie
+        Cookie cookie = new Cookie("fzteUser", sessionId);
+        cookie.setMaxAge(60 * 60 * 24);
+        response.addCookie(cookie);
+        // redis中添加
+        jedis.setex("u:" + sessionId + ":uN", 60 * 60 * 24, user.getUsername());  // user:sessionId:userName
+    }
 
     /**
      * 注册时用户名是否符合限制

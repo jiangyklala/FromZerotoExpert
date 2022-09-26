@@ -23,3 +23,5 @@
 + 错误
     + 不符合"注册"时的限制
     + 密码错误
+### 自动登录
+    登录时生成Cookie: fzteUser-sessionId, redis中存储: sessionId-userName,访问首页时根据是否有Cookie, 且Cookie中的sessionId在redis中是否过期实现自动登录
