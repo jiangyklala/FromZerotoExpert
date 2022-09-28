@@ -24,8 +24,8 @@
     + 不符合"注册"时的限制
     + 密码错误
 ### 自动登录
-  1. **首次登录:** 登录时生成Cookie: fzteUser-sessionId, 同时在 redis 中存储: sessionId-userName
+  1. **首次登录:** 登录时生成Cookie: fzteUser-sessionId, 同时在 redis 中以哈希存储用户信息: key: sessionId field:name value:userName
   2. **二次登录:** 登录时检测Cookie,
-     + 若有, 更新 Cooike 和 redis 中的键有效期
+     + 若有, 若这次登录的账号和上次相同更新 Cooike 和 redis 中的键有效期；若不相同，删除上次的用户信息，创建新账号的信息
      + 如无, 进行1.
   3. **访问首页:** 根据是否有Cookie, 且 Cookie 中的 sessionId 在 redis 中是否过期(防止用户手动更改 Cookie 有效期)实现自动登录

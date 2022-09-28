@@ -45,11 +45,20 @@ public class UserService {
      * 更新用户登录凭证
      * @param sessionId Cookie 中 "fzteUser" 的值
      */
-    public boolean updateLoginCert(String sessionId, HttpServletResponse response) {
+    public boolean updateLoginCert(String sessionId, String userName, HttpServletResponse response) {
         // 更新 sessionId
         if (jedis.expire(sessionId, 60 * 60 * 24) == 0) {
+            // sessionId失效, 即找不到这个key
             return false;
         }
+
+        //  此时登录的用户名和redis中记录的不同
+        if (!Objects.equals(jedis.hget(sessionId, "name"), userName)) {
+            // 删除原来的用户记录, 减少服务器空间消耗
+            jedis.expire(sessionId, 0);
+            return false;
+        }
+
         // 更新 Cookie
         Cookie cookie = new Cookie("fzteUser", sessionId);
         cookie.setMaxAge(60 * 60 * 24);
@@ -68,7 +77,6 @@ public class UserService {
         cookie.setMaxAge(60 * 60 * 24);
         response.addCookie(cookie);
         // redis中添加
-        // user:sessionId:userName
         jedis.hset(sessionId, "name", userName);
         jedis.expire(sessionId, 60 * 60 * 24);
     }
