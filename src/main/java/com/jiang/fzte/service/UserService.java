@@ -47,7 +47,7 @@ public class UserService {
      */
     public boolean updateLoginCert(String sessionId, HttpServletResponse response) {
         // 更新 sessionId
-        if (jedis.expire("u:" + sessionId + ":uN", 60 * 60 * 24) == 0) {
+        if (jedis.expire(sessionId, 60 * 60 * 24) == 0) {
             return false;
         }
         // 更新 Cookie
@@ -68,7 +68,9 @@ public class UserService {
         cookie.setMaxAge(60 * 60 * 24);
         response.addCookie(cookie);
         // redis中添加
-        jedis.setex("u:" + sessionId + ":uN", 60 * 60 * 24, userName);  // user:sessionId:userName
+        // user:sessionId:userName
+        jedis.hset(sessionId, "name", userName);
+        jedis.expire(sessionId, 60 * 60 * 24);
     }
 
     /**

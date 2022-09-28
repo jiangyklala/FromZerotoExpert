@@ -45,8 +45,8 @@ public class UserController {
         userService.isLoginPassword(user, resp);  // 这里需要传入user, 获取其用户名和密码
         if (resp.isSuccess()) {
             // 登陆成功, 添加或者更新登录凭证
-            if (sessionId != null && !userService.updateLoginCert(sessionId, response)) {
-                // 在无Cookie记录, 或者更新登录凭证失败时, 重现添加新的登录凭证
+            if (sessionId == null || !userService.updateLoginCert(sessionId, response)) {
+                // 在无Cookie记录, 或者有Cookie但sessionId失效时, 重现添加新的登录凭证
                 userService.addLoginCert(user.getUsername(), response);
             }
         }
@@ -57,10 +57,12 @@ public class UserController {
     @ResponseBody
     public CommonResp<String> welcome(@CookieValue(value = "fzteUser", required = false) String sessionId) {
         CommonResp<String> resp = new CommonResp<>();
-        if (sessionId == null || Objects.equals(userService.jedis.get("u:" + sessionId + ":uN"), null)) {
+        // 根据是否有Cookie, 且 Cookie 中的 sessionId 在 redis 中是否过期(防止用户手动更改 Cookie 有效期)
+        if (sessionId == null || Objects.equals(userService.jedis.hget(sessionId, "name"), null)) {
             resp.setSuccess(false);
+        } else {
+            resp.setContent(userService.jedis.hget(sessionId, "name"));
         }
-        resp.setContent(userService.jedis.get("u:" + sessionId + ":uN"));
         return resp;
     }
 
