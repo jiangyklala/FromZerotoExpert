@@ -29,6 +29,7 @@ public class UserService {
 
     public Jedis jedis;
 
+
     @PostConstruct
     public void init() {
         jedis = new Jedis("124.223.184.187", 6379);
@@ -42,43 +43,71 @@ public class UserService {
     }
 
     /**
-     * 更新用户登录凭证
-     * @param sessionId Cookie 中 "fzteUser" 的值
+     * 设置用户在线状态
      */
-    public boolean updateLoginCert(String sessionId, String userName, HttpServletResponse response) {
-        // 更新 sessionId
-        if (jedis.expire(sessionId, 60 * 60 * 24) == 0) {
-            // sessionId失效, 即找不到这个key
+    public void userOnline(String sessionId) {
+        jedis.hset(sessionId, "online", "1");
+    }
+
+    /**
+     * 设置用户离线状态
+     */
+    public void userOffline(String userName) {
+        jedis.hset(userName, "online", "0");
+    }
+
+    /**
+     * 更新用户登录凭证
+     */
+    public boolean updateLoginCert(String userName, String nowUserName, HttpServletResponse response) {
+        // 更新 userName
+        if (jedis.expire(userName, 60 * 60 * 24) == 0) {
+            // userName失效, 即找不到这个key
             return false;
         }
 
         //  此时登录的用户名和redis中记录的不同
-        if (!Objects.equals(jedis.hget(sessionId, "name"), userName)) {
+        if (!Objects.equals(userName, nowUserName)) {
             // 删除原来的用户记录, 减少服务器空间消耗
-            jedis.expire(sessionId, 0);
+            jedis.expire(userName, 0);
             return false;
         }
 
-        // 更新 Cookie
-        Cookie cookie = new Cookie("fzteUser", sessionId);
-        cookie.setMaxAge(60 * 60 * 24);
-        response.addCookie(cookie);
+        // 更新唯一登录凭证
+        String onlyLoginCert = Long.toString(System.currentTimeMillis());
+        jedis.hset(userName, "lc", onlyLoginCert);  // lc : loginCert
+
+        // 更新 cookieUserName
+        Cookie cookieUserName = new Cookie("fzteUser", userName);
+        cookieUserName.setMaxAge(60 * 60 * 24);
+        response.addCookie(cookieUserName);
+        // 更新 cookieLoginCert
+        Cookie cookieLoginCert = new Cookie("loginCert", onlyLoginCert);
+        cookieLoginCert.setMaxAge(60 * 60 * 24);
+        response.addCookie(cookieLoginCert);
         return true;
     }
 
     /**
      * 添加用户登录凭证
+     * @return 新生成的 sessionId
      */
-    public void addLoginCert(String userName, HttpServletResponse response) {
-        // 设置sessionID
-        String sessionId = Long.toString(new SnowFlakeIdWorker(0, 0).nextId());
-        // 创建Cookie
-        Cookie cookie = new Cookie("fzteUser", sessionId);
-        cookie.setMaxAge(60 * 60 * 24);
-        response.addCookie(cookie);
-        // redis中添加
-        jedis.hset(sessionId, "name", userName);
-        jedis.expire(sessionId, 60 * 60 * 24);
+    public void addLoginCert(String nowUserName, HttpServletResponse response) {
+
+        // fzteUser = 用户名 创建Cookie
+        Cookie cookieUserName = new Cookie("fzteUser", nowUserName);
+        cookieUserName.setMaxAge(60 * 60 * 24);
+        response.addCookie(cookieUserName);
+
+        // loginCert = 唯一登录凭证 创建Cookie
+        String onlyLoginCert = Long.toString(System.currentTimeMillis());
+        Cookie cookieLoginCert = new Cookie("loginCert", onlyLoginCert);
+        cookieLoginCert.setMaxAge(60 * 60 * 24);
+        response.addCookie(cookieLoginCert);
+
+        // redis中添加唯一登录凭证
+        jedis.hset(nowUserName, "lc", onlyLoginCert);
+        jedis.expire(nowUserName, 60 * 60 * 24);  // 设置自动登录期效
     }
 
     /**

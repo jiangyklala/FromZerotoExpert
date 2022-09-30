@@ -1,18 +1,54 @@
 $.ajax({
-    url: '/welcome',
+    url: '/Welcome',
     method: 'get',
     success: function (res) {
         if (res.success === true) {
-            document.write("<h2>嗨, " + res.content + ", 欢迎您来到 from zero to expert");
+            document.getElementById("insert").innerHTML = "<h2>嗨, " + res.content + ", 欢迎您来到 from zero to expert";
         } else {
             window.location.href = "/Login";
         }
     }
 })
 
+// window.addEventListener("beforeunload", function () {
+//     $.ajax({
+//         url: '/UserOffline',
+//         method: 'post'
+//     })
+// })
+
+window.onbeforeunload(function () {
+    $.ajax({
+        url: '/UserOffline',
+        method: 'post',
+        success: function (res) {
+            if (res.success === true) {
+                console.log("Yes");
+            } else {
+                console.log("No");
+            }
+        }
+    })
+})
+
+window.onunload(function () {
+    $.ajax({
+        url: '/UserOffline',
+        method: 'post',
+        success: function (res) {
+            if (res.success === true) {
+                console.log("Yes");
+            } else {
+                console.log("No");
+            }
+        }
+    })
+})
+
+
 function welcome() {
     var firstLogin = getCookie("firstLogin");
-    if (firstLogin == "1") {
+    if (firstLogin === "1") {
         document.write("嗨，欢迎您再次来到 from zero to expert.")
     } else {
         setCookie("firstLogin", "1", 24);
@@ -31,7 +67,7 @@ function getCookie(cookieKey) {
     var cookieSplit = document.cookie.split(";");
     for (var i = 0; i < cookieSplit.length; ++i) {
         var cookie = cookieSplit[i].trim(); // 去除空格
-        if (cookie.indexOf(name) == 0) {
+        if (cookie.indexOf(name) === 0) {
             return cookie.substring(name.length, cookie.length);
         }
     }
