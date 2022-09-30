@@ -22,7 +22,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         if (request.getCookies() != null) {
             Cookie fzteUser = WebUtils.getCookie(request, "fzteUser");
             Cookie loginCert = WebUtils.getCookie(request, "loginCert");
-            if (fzteUser != null && loginCert != null && Objects.equals(loginCert.getValue(), userService.jedis.hget(fzteUser.getValue(), "lc"))) {
+            if (fzteUser != null && loginCert != null && Objects.equals(loginCert.getValue(), userService.jedis.hget("fU:" + fzteUser.getValue(), "lc"))) {
                 return true;
             }
         }

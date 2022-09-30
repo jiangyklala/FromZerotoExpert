@@ -10,66 +10,23 @@ $.ajax({
     }
 })
 
-// window.addEventListener("beforeunload", function () {
-//     $.ajax({
-//         url: '/UserOffline',
-//         method: 'post'
-//     })
-// })
 
-window.onbeforeunload(function () {
-    $.ajax({
-        url: '/UserOffline',
-        method: 'post',
-        success: function (res) {
-            if (res.success === true) {
-                console.log("Yes");
-            } else {
-                console.log("No");
-            }
-        }
+function checkOffline() {
+    let currentTime = new Date().getTime(),
+        lastTime = new Date().getTime(),
+        diff = 3000;
+
+    $(document).on('mouseover', function () {
+        lastTime = new Date().getTime();
     })
-})
 
-window.onunload(function () {
-    $.ajax({
-        url: '/UserOffline',
-        method: 'post',
-        success: function (res) {
-            if (res.success === true) {
-                console.log("Yes");
-            } else {
-                console.log("No");
-            }
+    let timer = setInterval(function () {
+        currentTime = new Date().getTime();
+        if (currentTime - lastTime > diff) {
+            window.location.href = "/Login";
+            clearInterval(timer);
         }
-    })
-})
+    }, 1000)
 
 
-function welcome() {
-    var firstLogin = getCookie("firstLogin");
-    if (firstLogin === "1") {
-        document.write("嗨，欢迎您再次来到 from zero to expert.")
-    } else {
-        setCookie("firstLogin", "1", 24);
-        document.write("嗨，欢迎您来到 from zero to expert.")
-    }
-}
-
-// time单位为 hour
-function setCookie(cookieKey, cookieValue, time) {
-    const date = new Date(new Date().getTime() + time * 60 * 60 * 1000);
-    document.cookie = cookieKey + "=" + cookieValue + "; expires=" + date.toUTCString();
-}
-
-function getCookie(cookieKey) {
-    var name = cookieKey + "=";
-    var cookieSplit = document.cookie.split(";");
-    for (var i = 0; i < cookieSplit.length; ++i) {
-        var cookie = cookieSplit[i].trim(); // 去除空格
-        if (cookie.indexOf(name) === 0) {
-            return cookie.substring(name.length, cookie.length);
-        }
-    }
-    return "";
 }

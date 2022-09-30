@@ -17,6 +17,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 @Service
 public class UserService {
@@ -46,14 +47,14 @@ public class UserService {
      * 设置用户在线状态
      */
     public void userOnline(String sessionId) {
-        jedis.hset(sessionId, "online", "1");
+        jedis.hset("fU:" + sessionId, "online", "1");
     }
 
     /**
      * 设置用户离线状态
      */
     public void userOffline(String userAccount) {
-        jedis.hset(userAccount, "online", "0");
+        jedis.hset("fU:" + userAccount, "online", "0");
     }
 
     /**
@@ -61,7 +62,7 @@ public class UserService {
      */
     public boolean updateLoginCert(String userAccount, String nowUserAccount, HttpServletResponse response) {
         // 更新 userAccount
-        if (jedis.expire(userAccount, 60 * 60 * 24) == 0) {
+        if (jedis.expire("fU:" + userAccount, 60 * 60 * 24) == 0) {
             // userAccount失效, 即找不到这个key
             return false;
         }
@@ -69,13 +70,13 @@ public class UserService {
         //  此时登录的账号和redis中记录的不同
         if (!Objects.equals(userAccount, nowUserAccount)) {
             // 删除原来的用户记录, 减少服务器空间消耗
-            jedis.expire(userAccount, 0);
+            jedis.expire("fU:" + userAccount, 0);
             return false;
         }
 
         // 更新唯一登录凭证
         String onlyLoginCert = Long.toString(System.currentTimeMillis());
-        jedis.hset(userAccount, "lc", onlyLoginCert);  // lc : loginCert
+        jedis.hset("fU:" + userAccount, "lc", onlyLoginCert);  // lc : loginCert
 
         // 更新 cookieUserAccount
         Cookie cookieUserAccount = new Cookie("fzteUser", userAccount);
@@ -105,8 +106,8 @@ public class UserService {
         response.addCookie(cookieLoginCert);
 
         // redis中添加唯一登录凭证
-        jedis.hset(nowUserAccount, "lc", onlyLoginCert);
-        jedis.expire(nowUserAccount, 60 * 60 * 24);  // 设置自动登录期效
+        jedis.hset("fU:" + nowUserAccount, "lc", onlyLoginCert);
+        jedis.expire("fU:" + nowUserAccount, 60 * 60 * 24);  // 设置自动登录期效
     }
 
     /**
@@ -115,10 +116,17 @@ public class UserService {
      */
     public void isRegisterUserAccount(String userAccount, CommonResp resp) {
         
-        // 判断账号强度
+        // 判断账号长度
         if (userAccount.length() < 5 || userAccount.length() > 12) {
             resp.setSuccess(false);
             resp.setMessage(resp.getMessage() + "账号需要 5 - 12 个位; ");
+        }
+
+        // 判断账号是否有中文
+        Pattern pattern1 = Pattern.compile("^[a-zA-Z0-9]*$");
+        if (!pattern1.matcher(userAccount).matches()) {
+            resp.setSuccess(false);
+            resp.setMessage(resp.getMessage() + "账号只允许有数字和大小写字母; ");
         }
 
         //判断账号是否有空格
@@ -149,7 +157,18 @@ public class UserService {
      */
     public void isLoginUserAccount(String userAccount, CommonResp resp) {
 
-        
+        // 判断账号长度
+        if (userAccount.length() < 5 || userAccount.length() > 12) {
+            resp.setSuccess(false);
+            resp.setMessage(resp.getMessage() + "账号需要 5 - 12 个位; ");
+        }
+
+        // 判断账号是否有中文
+        Pattern pattern1 = Pattern.compile("^[a-zA-Z0-9]*$");
+        if (!pattern1.matcher(userAccount).matches()) {
+            resp.setSuccess(false);
+            resp.setMessage(resp.getMessage() + "账号不存在; ");
+        }
 
         //判断账号是否有空格, 是否有敏感词
         if (UserAccountLimit.userAccountSpace(userAccount)
