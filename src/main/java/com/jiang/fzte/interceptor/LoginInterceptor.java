@@ -3,6 +3,7 @@ package com.jiang.fzte.interceptor;
 import com.jiang.fzte.service.UserService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.util.WebUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
@@ -19,20 +20,11 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (request.getCookies() != null) {
-            String userName = "";
-            String onlyLoginCert = "";
-            Cookie[] cookies = request.getCookies();
-            for (Cookie cookie : cookies) {
-                if (Objects.equals(cookie.getName(), "fzteUser")) userName = cookie.getValue();
-                if (Objects.equals(cookie.getName(), "loginCert")) onlyLoginCert = cookie.getValue();
-            }
-            if (!Objects.equals(userName, "") && !Objects.equals(onlyLoginCert, "") && Objects.equals(onlyLoginCert, userService.jedis.hget(userName, "lc"))) {
+            Cookie fzteUser = WebUtils.getCookie(request, "fzteUser");
+            Cookie loginCert = WebUtils.getCookie(request, "loginCert");
+            if (fzteUser != null && loginCert != null && Objects.equals(loginCert.getValue(), userService.jedis.hget(fzteUser.getValue(), "lc"))) {
                 return true;
             }
-//            if (userName == "" || onlyLoginCert == "" || !Objects.equals(onlyLoginCert, userService.jedis.hget(userName, "lc"))) {
-//                response.sendRedirect("/Login");
-//                return false;
-//            }
         }
         response.sendRedirect("/Login");
         return false;
