@@ -12,8 +12,10 @@ insert into `demo` (id, name) values (1, '测试');
 drop table if exists `user`;
 create table `user` (
                         `id` bigint auto_increment not null,
-                        `username` varchar(50) not null default(NULL),
+                        `username` varchar(50) default(NULL),
+                        `useraccount` varchar(50) not null default(NULL),
                         `password` char(32) not null default(NULL),
+                        `salt` varchar(50) not null default(NULL),
                         `email` varchar(50) default(NULL),
                         `comment` varchar(50) default(NULL),
                         primary key (`id`)
@@ -38,4 +40,5 @@ insert into disallow_word(value) values ('lala');
 
 
 alter table user add salt varchar(225) default(NULL);
+alter table user add useraccount varchar(50) default(NULL);
 

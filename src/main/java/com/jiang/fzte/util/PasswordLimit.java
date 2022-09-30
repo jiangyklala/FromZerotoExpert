@@ -19,10 +19,10 @@ public class PasswordLimit {
             return 1;
         }
 
-        // 强度判断: 密码字符只能是 数字+英文大小写（算是三种字符); 包含 2 种及其以上字符;
+        // 强度判断: a.密码字符只能是 数字+英文大小写（算是三种字符); b.包含 2 种及其以上字符;
         int wordType = 0;
-        Pattern pattern1 = Pattern.compile("^[a-zA-Z0-9]*$"); // 只能匹配前者
-        Pattern pattern2 = Pattern.compile("^(?![a-z]+$)(?![A-Z]+$)(?![0-9]+$)[a-zA-Z0-9]*$"); // 只能匹配后者
+        Pattern pattern1 = Pattern.compile("^[a-zA-Z0-9]*$"); // 只能匹配 a
+        Pattern pattern2 = Pattern.compile("^(?![a-z]+$)(?![A-Z]+$)(?![0-9]+$)[a-zA-Z0-9]*$"); // 只能匹配 b
         if (!pattern1.matcher(password).matches()) {
             return 2;
         }

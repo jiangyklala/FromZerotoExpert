@@ -5,13 +5,15 @@ public class User {
 
     private String username;
 
+    private String useraccount;
+
     private String password;
+
+    private String salt;
 
     private String email;
 
     private String comment;
-
-    private String salt;
 
     public Long getId() {
         return id;
@@ -29,12 +31,28 @@ public class User {
         this.username = username;
     }
 
+    public String getUseraccount() {
+        return useraccount;
+    }
+
+    public void setUseraccount(String useraccount) {
+        this.useraccount = useraccount;
+    }
+
     public String getPassword() {
         return password;
     }
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
     }
 
     public String getEmail() {
@@ -53,14 +71,6 @@ public class User {
         this.comment = comment;
     }
 
-    public String getSalt() {
-        return salt;
-    }
-
-    public void setSalt(String salt) {
-        this.salt = salt;
-    }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -69,10 +79,11 @@ public class User {
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
         sb.append(", username=").append(username);
+        sb.append(", useraccount=").append(useraccount);
         sb.append(", password=").append(password);
+        sb.append(", salt=").append(salt);
         sb.append(", email=").append(email);
         sb.append(", comment=").append(comment);
-        sb.append(", salt=").append(salt);
         sb.append("]");
         return sb.toString();
     }

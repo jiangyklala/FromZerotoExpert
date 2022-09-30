@@ -234,6 +234,76 @@ public class UserExample {
             return (Criteria) this;
         }
 
+        public Criteria andUseraccountIsNull() {
+            addCriterion("useraccount is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUseraccountIsNotNull() {
+            addCriterion("useraccount is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUseraccountEqualTo(String value) {
+            addCriterion("useraccount =", value, "useraccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andUseraccountNotEqualTo(String value) {
+            addCriterion("useraccount <>", value, "useraccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andUseraccountGreaterThan(String value) {
+            addCriterion("useraccount >", value, "useraccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andUseraccountGreaterThanOrEqualTo(String value) {
+            addCriterion("useraccount >=", value, "useraccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andUseraccountLessThan(String value) {
+            addCriterion("useraccount <", value, "useraccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andUseraccountLessThanOrEqualTo(String value) {
+            addCriterion("useraccount <=", value, "useraccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andUseraccountLike(String value) {
+            addCriterion("useraccount like", value, "useraccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andUseraccountNotLike(String value) {
+            addCriterion("useraccount not like", value, "useraccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andUseraccountIn(List<String> values) {
+            addCriterion("useraccount in", values, "useraccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andUseraccountNotIn(List<String> values) {
+            addCriterion("useraccount not in", values, "useraccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andUseraccountBetween(String value1, String value2) {
+            addCriterion("useraccount between", value1, value2, "useraccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andUseraccountNotBetween(String value1, String value2) {
+            addCriterion("useraccount not between", value1, value2, "useraccount");
+            return (Criteria) this;
+        }
+
         public Criteria andPasswordIsNull() {
             addCriterion("`password` is null");
             return (Criteria) this;
@@ -301,6 +371,76 @@ public class UserExample {
 
         public Criteria andPasswordNotBetween(String value1, String value2) {
             addCriterion("`password` not between", value1, value2, "password");
+            return (Criteria) this;
+        }
+
+        public Criteria andSaltIsNull() {
+            addCriterion("salt is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSaltIsNotNull() {
+            addCriterion("salt is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSaltEqualTo(String value) {
+            addCriterion("salt =", value, "salt");
+            return (Criteria) this;
+        }
+
+        public Criteria andSaltNotEqualTo(String value) {
+            addCriterion("salt <>", value, "salt");
+            return (Criteria) this;
+        }
+
+        public Criteria andSaltGreaterThan(String value) {
+            addCriterion("salt >", value, "salt");
+            return (Criteria) this;
+        }
+
+        public Criteria andSaltGreaterThanOrEqualTo(String value) {
+            addCriterion("salt >=", value, "salt");
+            return (Criteria) this;
+        }
+
+        public Criteria andSaltLessThan(String value) {
+            addCriterion("salt <", value, "salt");
+            return (Criteria) this;
+        }
+
+        public Criteria andSaltLessThanOrEqualTo(String value) {
+            addCriterion("salt <=", value, "salt");
+            return (Criteria) this;
+        }
+
+        public Criteria andSaltLike(String value) {
+            addCriterion("salt like", value, "salt");
+            return (Criteria) this;
+        }
+
+        public Criteria andSaltNotLike(String value) {
+            addCriterion("salt not like", value, "salt");
+            return (Criteria) this;
+        }
+
+        public Criteria andSaltIn(List<String> values) {
+            addCriterion("salt in", values, "salt");
+            return (Criteria) this;
+        }
+
+        public Criteria andSaltNotIn(List<String> values) {
+            addCriterion("salt not in", values, "salt");
+            return (Criteria) this;
+        }
+
+        public Criteria andSaltBetween(String value1, String value2) {
+            addCriterion("salt between", value1, value2, "salt");
+            return (Criteria) this;
+        }
+
+        public Criteria andSaltNotBetween(String value1, String value2) {
+            addCriterion("salt not between", value1, value2, "salt");
             return (Criteria) this;
         }
 
@@ -441,76 +581,6 @@ public class UserExample {
 
         public Criteria andCommentNotBetween(String value1, String value2) {
             addCriterion("`comment` not between", value1, value2, "comment");
-            return (Criteria) this;
-        }
-
-        public Criteria andSaltIsNull() {
-            addCriterion("salt is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andSaltIsNotNull() {
-            addCriterion("salt is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andSaltEqualTo(String value) {
-            addCriterion("salt =", value, "salt");
-            return (Criteria) this;
-        }
-
-        public Criteria andSaltNotEqualTo(String value) {
-            addCriterion("salt <>", value, "salt");
-            return (Criteria) this;
-        }
-
-        public Criteria andSaltGreaterThan(String value) {
-            addCriterion("salt >", value, "salt");
-            return (Criteria) this;
-        }
-
-        public Criteria andSaltGreaterThanOrEqualTo(String value) {
-            addCriterion("salt >=", value, "salt");
-            return (Criteria) this;
-        }
-
-        public Criteria andSaltLessThan(String value) {
-            addCriterion("salt <", value, "salt");
-            return (Criteria) this;
-        }
-
-        public Criteria andSaltLessThanOrEqualTo(String value) {
-            addCriterion("salt <=", value, "salt");
-            return (Criteria) this;
-        }
-
-        public Criteria andSaltLike(String value) {
-            addCriterion("salt like", value, "salt");
-            return (Criteria) this;
-        }
-
-        public Criteria andSaltNotLike(String value) {
-            addCriterion("salt not like", value, "salt");
-            return (Criteria) this;
-        }
-
-        public Criteria andSaltIn(List<String> values) {
-            addCriterion("salt in", values, "salt");
-            return (Criteria) this;
-        }
-
-        public Criteria andSaltNotIn(List<String> values) {
-            addCriterion("salt not in", values, "salt");
-            return (Criteria) this;
-        }
-
-        public Criteria andSaltBetween(String value1, String value2) {
-            addCriterion("salt between", value1, value2, "salt");
-            return (Criteria) this;
-        }
-
-        public Criteria andSaltNotBetween(String value1, String value2) {
-            addCriterion("salt not between", value1, value2, "salt");
             return (Criteria) this;
         }
     }

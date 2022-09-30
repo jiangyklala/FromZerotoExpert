@@ -4,10 +4,11 @@
   <resultMap id="BaseResultMap" type="com.jiang.fzte.domain.User">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="useraccount" jdbcType="VARCHAR" property="useraccount" />
     <result column="password" jdbcType="CHAR" property="password" />
+    <result column="salt" jdbcType="VARCHAR" property="salt" />
     <result column="email" jdbcType="VARCHAR" property="email" />
     <result column="comment" jdbcType="VARCHAR" property="comment" />
-    <result column="salt" jdbcType="VARCHAR" property="salt" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -68,7 +69,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, username, `password`, email, `comment`, salt
+    id, username, useraccount, `password`, salt, email, `comment`
   </sql>
   <select id="selectByExample" parameterType="com.jiang.fzte.domain.UserExample" resultMap="BaseResultMap">
     select
@@ -101,12 +102,12 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.jiang.fzte.domain.User">
-    insert into user (id, username, `password`, 
-      email, `comment`, salt
-      )
-    values (#{id,jdbcType=BIGINT}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=CHAR}, 
-      #{email,jdbcType=VARCHAR}, #{comment,jdbcType=VARCHAR}, #{salt,jdbcType=VARCHAR}
-      )
+    insert into user (id, username, useraccount, 
+      `password`, salt, email, 
+      `comment`)
+    values (#{id,jdbcType=BIGINT}, #{username,jdbcType=VARCHAR}, #{useraccount,jdbcType=VARCHAR}, 
+      #{password,jdbcType=CHAR}, #{salt,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
+      #{comment,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.jiang.fzte.domain.User">
     insert into user
@@ -117,17 +118,20 @@
       <if test="username != null">
         username,
       </if>
+      <if test="useraccount != null">
+        useraccount,
+      </if>
       <if test="password != null">
         `password`,
+      </if>
+      <if test="salt != null">
+        salt,
       </if>
       <if test="email != null">
         email,
       </if>
       <if test="comment != null">
         `comment`,
-      </if>
-      <if test="salt != null">
-        salt,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -137,17 +141,20 @@
       <if test="username != null">
         #{username,jdbcType=VARCHAR},
       </if>
+      <if test="useraccount != null">
+        #{useraccount,jdbcType=VARCHAR},
+      </if>
       <if test="password != null">
         #{password,jdbcType=CHAR},
+      </if>
+      <if test="salt != null">
+        #{salt,jdbcType=VARCHAR},
       </if>
       <if test="email != null">
         #{email,jdbcType=VARCHAR},
       </if>
       <if test="comment != null">
         #{comment,jdbcType=VARCHAR},
-      </if>
-      <if test="salt != null">
-        #{salt,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -166,17 +173,20 @@
       <if test="record.username != null">
         username = #{record.username,jdbcType=VARCHAR},
       </if>
+      <if test="record.useraccount != null">
+        useraccount = #{record.useraccount,jdbcType=VARCHAR},
+      </if>
       <if test="record.password != null">
         `password` = #{record.password,jdbcType=CHAR},
+      </if>
+      <if test="record.salt != null">
+        salt = #{record.salt,jdbcType=VARCHAR},
       </if>
       <if test="record.email != null">
         email = #{record.email,jdbcType=VARCHAR},
       </if>
       <if test="record.comment != null">
         `comment` = #{record.comment,jdbcType=VARCHAR},
-      </if>
-      <if test="record.salt != null">
-        salt = #{record.salt,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="_parameter != null">
@@ -187,10 +197,11 @@
     update user
     set id = #{record.id,jdbcType=BIGINT},
       username = #{record.username,jdbcType=VARCHAR},
+      useraccount = #{record.useraccount,jdbcType=VARCHAR},
       `password` = #{record.password,jdbcType=CHAR},
+      salt = #{record.salt,jdbcType=VARCHAR},
       email = #{record.email,jdbcType=VARCHAR},
-      `comment` = #{record.comment,jdbcType=VARCHAR},
-      salt = #{record.salt,jdbcType=VARCHAR}
+      `comment` = #{record.comment,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -201,8 +212,14 @@
       <if test="username != null">
         username = #{username,jdbcType=VARCHAR},
       </if>
+      <if test="useraccount != null">
+        useraccount = #{useraccount,jdbcType=VARCHAR},
+      </if>
       <if test="password != null">
         `password` = #{password,jdbcType=CHAR},
+      </if>
+      <if test="salt != null">
+        salt = #{salt,jdbcType=VARCHAR},
       </if>
       <if test="email != null">
         email = #{email,jdbcType=VARCHAR},
@@ -210,19 +227,17 @@
       <if test="comment != null">
         `comment` = #{comment,jdbcType=VARCHAR},
       </if>
-      <if test="salt != null">
-        salt = #{salt,jdbcType=VARCHAR},
-      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.jiang.fzte.domain.User">
     update user
     set username = #{username,jdbcType=VARCHAR},
+      useraccount = #{useraccount,jdbcType=VARCHAR},
       `password` = #{password,jdbcType=CHAR},
+      salt = #{salt,jdbcType=VARCHAR},
       email = #{email,jdbcType=VARCHAR},
-      `comment` = #{comment,jdbcType=VARCHAR},
-      salt = #{salt,jdbcType=VARCHAR}
+      `comment` = #{comment,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

@@ -7,7 +7,7 @@ import com.jiang.fzte.resp.CommonResp;
 import com.jiang.fzte.util.Md5Encrypt;
 import com.jiang.fzte.util.PasswordLimit;
 import com.jiang.fzte.util.SnowFlakeIdWorker;
-import com.jiang.fzte.util.UserNameLimit;
+import com.jiang.fzte.util.UserAccountLimit;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
 
@@ -15,7 +15,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Objects;
 
@@ -53,35 +52,35 @@ public class UserService {
     /**
      * 设置用户离线状态
      */
-    public void userOffline(String userName) {
-        jedis.hset(userName, "online", "0");
+    public void userOffline(String userAccount) {
+        jedis.hset(userAccount, "online", "0");
     }
 
     /**
      * 更新用户登录凭证
      */
-    public boolean updateLoginCert(String userName, String nowUserName, HttpServletResponse response) {
-        // 更新 userName
-        if (jedis.expire(userName, 60 * 60 * 24) == 0) {
-            // userName失效, 即找不到这个key
+    public boolean updateLoginCert(String userAccount, String nowUserAccount, HttpServletResponse response) {
+        // 更新 userAccount
+        if (jedis.expire(userAccount, 60 * 60 * 24) == 0) {
+            // userAccount失效, 即找不到这个key
             return false;
         }
 
-        //  此时登录的用户名和redis中记录的不同
-        if (!Objects.equals(userName, nowUserName)) {
+        //  此时登录的账号和redis中记录的不同
+        if (!Objects.equals(userAccount, nowUserAccount)) {
             // 删除原来的用户记录, 减少服务器空间消耗
-            jedis.expire(userName, 0);
+            jedis.expire(userAccount, 0);
             return false;
         }
 
         // 更新唯一登录凭证
         String onlyLoginCert = Long.toString(System.currentTimeMillis());
-        jedis.hset(userName, "lc", onlyLoginCert);  // lc : loginCert
+        jedis.hset(userAccount, "lc", onlyLoginCert);  // lc : loginCert
 
-        // 更新 cookieUserName
-        Cookie cookieUserName = new Cookie("fzteUser", userName);
-        cookieUserName.setMaxAge(60 * 60 * 24);
-        response.addCookie(cookieUserName);
+        // 更新 cookieUserAccount
+        Cookie cookieUserAccount = new Cookie("fzteUser", userAccount);
+        cookieUserAccount.setMaxAge(60 * 60 * 24);
+        response.addCookie(cookieUserAccount);
         // 更新 cookieLoginCert
         Cookie cookieLoginCert = new Cookie("loginCert", onlyLoginCert);
         cookieLoginCert.setMaxAge(60 * 60 * 24);
@@ -91,14 +90,13 @@ public class UserService {
 
     /**
      * 添加用户登录凭证
-     * @return 新生成的 sessionId
      */
-    public void addLoginCert(String nowUserName, HttpServletResponse response) {
+    public void addLoginCert(String nowUserAccount, HttpServletResponse response) {
 
-        // fzteUser = 用户名 创建Cookie
-        Cookie cookieUserName = new Cookie("fzteUser", nowUserName);
-        cookieUserName.setMaxAge(60 * 60 * 24);
-        response.addCookie(cookieUserName);
+        // fzteUser = 账号 创建Cookie
+        Cookie cookieUserAccount = new Cookie("fzteUser", nowUserAccount);
+        cookieUserAccount.setMaxAge(60 * 60 * 24);
+        response.addCookie(cookieUserAccount);
 
         // loginCert = 唯一登录凭证 创建Cookie
         String onlyLoginCert = Long.toString(System.currentTimeMillis());
@@ -107,56 +105,64 @@ public class UserService {
         response.addCookie(cookieLoginCert);
 
         // redis中添加唯一登录凭证
-        jedis.hset(nowUserName, "lc", onlyLoginCert);
-        jedis.expire(nowUserName, 60 * 60 * 24);  // 设置自动登录期效
+        jedis.hset(nowUserAccount, "lc", onlyLoginCert);
+        jedis.expire(nowUserAccount, 60 * 60 * 24);  // 设置自动登录期效
     }
 
     /**
-     * 注册时用户名是否符合限制
+     * 注册时账号是否符合限制
      * @param resp 传入最终返回结果类的引用, 进行修改
      */
-    public void isRegisterUserName(String userName, CommonResp resp) {
-
-        //判断用户名是否有空格
-        if (UserNameLimit.userNameSpace(userName)) {
+    public void isRegisterUserAccount(String userAccount, CommonResp resp) {
+        
+        // 判断账号强度
+        if (userAccount.length() < 5 || userAccount.length() > 12) {
             resp.setSuccess(false);
-            resp.setMessage(resp.getMessage() + "用户名中不能含有空格; ");
+            resp.setMessage(resp.getMessage() + "账号需要 5 - 12 个位; ");
+        }
+
+        //判断账号是否有空格
+        if (UserAccountLimit.userAccountSpace(userAccount)) {
+            resp.setSuccess(false);
+            resp.setMessage(resp.getMessage() + "账号中不能含有空格; ");
             return;
         }
 
-        // 判断用户名唯一
-        if (null != UserNameLimit.existAUser(userName, new UserExample(), userMapper)) {
+        // 判断账号唯一
+        if (null != UserAccountLimit.existAUser(userAccount, new UserExample(), userMapper)) {
             resp.setSuccess(false);
-            resp.setMessage(resp.getMessage() + "用户名重复; ");
+            resp.setMessage(resp.getMessage() + "账号重复; ");
             return;
 
         }
 
         // 判断敏感词
-        if (UserNameLimit.userNamePolite(userName, Disallow_wordService.root) == 1) {
+        if (UserAccountLimit.userAccountPolite(userAccount, Disallow_wordService.root) == 1) {
             resp.setSuccess(false);
             resp.setMessage(resp.getMessage() + "含有敏感词; ");  // 原有的信息也不要丢
             return;
         }
     }
     /**
-     * 登录时用户名是否符合限制
+     * 登录时账号是否符合限制
      * @param resp 传入最终返回结果类的引用, 进行修改
      */
-    public void isLoginUserName(String userName, CommonResp resp) {
+    public void isLoginUserAccount(String userAccount, CommonResp resp) {
 
-        //判断用户名是否有空格, 是否有敏感词
-        if (UserNameLimit.userNameSpace(userName)
-                || UserNameLimit.userNamePolite(userName, Disallow_wordService.root) == 1) {
+        
+
+        //判断账号是否有空格, 是否有敏感词
+        if (UserAccountLimit.userAccountSpace(userAccount)
+                || UserAccountLimit.userAccountPolite(userAccount, Disallow_wordService.root) == 1) {
             resp.setSuccess(false);
-            resp.setMessage(resp.getMessage() + "用户名不存在; ");
+            resp.setMessage(resp.getMessage() + "账号不存在; ");
             return;
         }
 
         // 判断是否未注册
-        if (null == UserNameLimit.existAUser(userName, new UserExample(), userMapper)) {
+        if (null == UserAccountLimit.existAUser(userAccount, new UserExample(), userMapper)) {
             resp.setSuccess(false);
-            resp.setMessage("用户名未注册");
+            resp.setMessage("账号未注册");
             return;
         }
     }
@@ -187,7 +193,7 @@ public class UserService {
      * @param resp 传入最终返回结果类的引用, 进行修改
      */
     public void isLoginPassword(User user, CommonResp resp) {
-        // 如果用户名已经不对, 直接返回
+        // 如果账号已经不对, 直接返回
         if (!resp.isSuccess()) {
             return;
         }
@@ -200,7 +206,7 @@ public class UserService {
         }
 
         // 判断密码是否正确
-        User oldUser = UserNameLimit.selectAUser(user.getUsername(), new UserExample(), userMapper);
+        User oldUser = UserAccountLimit.selectAUser(user.getUseraccount(), new UserExample(), userMapper);
         String nowPassword = Md5Encrypt.mdtEncrypt(user.getPassword(), oldUser.getSalt(), (long) user.getPassword().length());
         if (!Objects.equals(oldUser.getPassword(), nowPassword)) {
             resp.setSuccess(false);
