@@ -4,6 +4,7 @@ import com.jiang.fzte.service.UserService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.util.WebUtils;
+import redis.clients.jedis.Jedis;
 
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
@@ -20,10 +21,16 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (request.getCookies() != null) {
-            Cookie fzteUser = WebUtils.getCookie(request, "fzteUser");
-            Cookie loginCert = WebUtils.getCookie(request, "loginCert");
-            if (fzteUser != null && loginCert != null && Objects.equals(loginCert.getValue(), userService.jedis.hget("fU:" + fzteUser.getValue(), "lc"))) {
-                return true;
+            try {
+                Jedis jedis= userService.jedisPool.getResource();
+                Cookie fzteUser = WebUtils.getCookie(request, "fzteUser");
+                Cookie loginCert = WebUtils.getCookie(request, "loginCert");
+                if (fzteUser != null && loginCert != null && Objects.equals(loginCert.getValue(), jedis.hget("fU:" + fzteUser.getValue(), "lc"))) {
+                    return true;
+                }
+                jedis.close();
+            } catch (Exception e) {
+                return false;
             }
         }
         response.sendRedirect("/Login");

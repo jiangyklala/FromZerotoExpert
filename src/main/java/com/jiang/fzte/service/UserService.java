@@ -10,6 +10,8 @@ import com.jiang.fzte.util.SnowFlakeIdWorker;
 import com.jiang.fzte.util.UserAccountLimit;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -28,39 +30,36 @@ public class UserService {
     @Resource
     private Disallow_wordService disallow_wordService;
 
-    public Jedis jedis;
+    public JedisPool jedisPool;
 
 
     @PostConstruct
     public void init() {
-        jedis = new Jedis("124.223.184.187", 6379);
-        jedis.auth("jiang");
-        jedis.select(1);
+        JedisPoolConfig config = new JedisPoolConfig();
+        config.setMaxTotal(50);//最大连接对象
+        config.setMaxIdle(10);//最大闲置对象
+        jedisPool = new JedisPool(config, "124.223.184.187", 6379, 5000, "jiang", 1);
     }
+//
+//    @PreDestroy
+//    public void end() {
+//        jedis.close();
+//    }
 
-    @PreDestroy
-    public void end() {
+    /**
+     * 在 zset 中添加: score = 用户登录的时间戳, member = 用户账号
+     */
+    public void userOnline(String userAccount, long time) {
+        Jedis jedis= jedisPool.getResource();
+        jedis.zadd("fU:oL", time, userAccount);  // fzteUser:online
         jedis.close();
-    }
-
-    /**
-     * 设置用户在线状态
-     */
-    public void userOnline(String sessionId) {
-        jedis.hset("fU:" + sessionId, "online", "1");
-    }
-
-    /**
-     * 设置用户离线状态
-     */
-    public void userOffline(String userAccount) {
-        jedis.hset("fU:" + userAccount, "online", "0");
     }
 
     /**
      * 更新用户登录凭证
      */
     public boolean updateLoginCert(String userAccount, String nowUserAccount, HttpServletResponse response) {
+        Jedis jedis= jedisPool.getResource();
         // 更新 userAccount
         if (jedis.expire("fU:" + userAccount, 60 * 60 * 24) == 0) {
             // userAccount失效, 即找不到这个key
@@ -86,6 +85,8 @@ public class UserService {
         Cookie cookieLoginCert = new Cookie("loginCert", onlyLoginCert);
         cookieLoginCert.setMaxAge(60 * 60 * 24);
         response.addCookie(cookieLoginCert);
+
+        jedis.close();
         return true;
     }
 
@@ -106,8 +107,10 @@ public class UserService {
         response.addCookie(cookieLoginCert);
 
         // redis中添加唯一登录凭证
+        Jedis jedis= jedisPool.getResource();
         jedis.hset("fU:" + nowUserAccount, "lc", onlyLoginCert);
         jedis.expire("fU:" + nowUserAccount, 60 * 60 * 24);  // 设置自动登录期效
+        jedis.close();
     }
 
     /**

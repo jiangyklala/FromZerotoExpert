@@ -3,30 +3,36 @@ $.ajax({
     method: 'get',
     success: function (res) {
         if (res.success === true) {
-            document.getElementById("insert").innerHTML = "<h2>嗨, " + res.content + ", 欢迎您来到 from zero to expert";
+            document.getElementById("insertWelcome").innerHTML = "<h2>嗨, " + res.content + ", 欢迎您来到 from zero to expert";
         } else {
             window.location.href = "/Login";
         }
     }
 })
 
+stillAlive();
+setInterval(stillAlive, 5* 1000);
+showOnlineUsers();
+setInterval(showOnlineUsers, 7 * 1000);
 
-function checkOffline() {
-    let currentTime = new Date().getTime(),
-        lastTime = new Date().getTime(),
-        diff = 3000;
-
-    $(document).on('mouseover', function () {
-        lastTime = new Date().getTime();
+function stillAlive() {
+    $.ajax({
+        url: '/StillAlive',
+        method: 'post'
     })
+}
 
-    let timer = setInterval(function () {
-        currentTime = new Date().getTime();
-        if (currentTime - lastTime > diff) {
-            window.location.href = "/Login";
-            clearInterval(timer);
+function showOnlineUsers() {
+    $.ajax({
+        url: '/ShowOnlineUsers',
+        method: 'get',
+        success: function (res) {
+            let htmlString = "<h2>当前在线人数:</h2><br>";
+            const users = JSON.parse(res);
+            for (let i = 0; i < users.length; ++i) {
+                htmlString = htmlString + "<h3>" + users[i] + "</h3><br>";
+            }
+            document.getElementById("insertOnlineUser").innerHTML = htmlString;
         }
-    }, 1000)
-
-
+    })
 }
