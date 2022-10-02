@@ -11,9 +11,9 @@ $.ajax({
 })
 
 stillAlive();
-setInterval(stillAlive, 5* 1000);
+setInterval(stillAlive, 5 * 60 * 1000);
 showOnlineUsers();
-setInterval(showOnlineUsers, 7 * 1000);
+setInterval(showOnlineUsers, 10 * 60 * 1000);
 
 function stillAlive() {
     $.ajax({

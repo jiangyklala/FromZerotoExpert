@@ -14,10 +14,12 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -27,18 +29,13 @@ public class UserService {
     @Resource
     private UserMapper userMapper;
 
-    @Resource
-    private Disallow_wordService disallow_wordService;
-
-    public JedisPool jedisPool;
+    public static JedisPool jedisPool;
 
 
     @PostConstruct
     public void init() {
-        JedisPoolConfig config = new JedisPoolConfig();
-        config.setMaxTotal(100);//最大连接对象
-        config.setMaxIdle(10);//最大闲置对象
-        jedisPool = new JedisPool(config, "124.223.184.187", 6379, 5000, "jiang", 1);
+        jedisPool = new JedisPool(setJedisPoolConfig(), "124.223.184.187", 6379, 5000, "jiang", 1);
+        initJedisPool(jedisPool);
     }
 
 //    @PreDestroy
@@ -47,13 +44,66 @@ public class UserService {
 //    }
 
     /**
+     * 预热
+     */
+    public void initJedisPool(JedisPool jedisPool) {
+        int minIdle = 50;
+        List<Jedis> minIdleJedisList = new ArrayList<>(minIdle);
+        for (int i = 0; i < minIdle; i++) {
+            Jedis jedis = null;
+            try {
+                jedis = jedisPool.getResource();
+                minIdleJedisList.add(jedis);
+                jedis.ping();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (int i = 0; i < minIdle; i++) {
+            Jedis jedis = null;
+            try {
+                jedis = minIdleJedisList.get(i);
+                jedis.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * 配置连接池
+     */
+    public JedisPoolConfig setJedisPoolConfig() {
+        JedisPoolConfig config = new JedisPoolConfig();
+        config.setMaxTotal(100);//最大连接对象
+        config.setJmxEnabled(true);
+        config.setMaxIdle(50);//最大闲置对象
+        config.setMinIdle(50);//最小闲置对象
+        config.setTestOnBorrow(true); // 向资源池借用连接时是否做有效性检测
+        config.setTestOnReturn(true); // 向资源池归还连接时是否做有效性检测
+        config.setTestWhileIdle(true); // 是否在空闲资源检测时通过 ping 命令检测连接的有效性,无效连接将被销毁
+        config.setMaxWait(Duration.ofSeconds(5)); // 当资源池连接用尽后，调用者的最大等待时间
+        config.setMinEvictableIdleTime(Duration.ofSeconds(10));
+        config.setTimeBetweenEvictionRuns(Duration.ofSeconds(5));  // 空闲资源的检测周期
+        config.setBlockWhenExhausted(true);
+        return config;
+    }
+
+    /**
      * 在 zset 中添加: score = 用户登录的时间戳, member = 用户账号
      */
     public void userOnline(String userAccount, long time) {
-        try (Jedis jedis = jedisPool.getResource()) {
+        Jedis jedis = null;
+        try {
+            jedis = jedisPool.getResource();
             jedis.zadd("fU:oL", time, userAccount);  // fzteUser:online
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            if (jedis != null) {
+                jedis.close();
+            }
         }
     }
 
