@@ -36,11 +36,11 @@ public class UserService {
     @PostConstruct
     public void init() {
         JedisPoolConfig config = new JedisPoolConfig();
-        config.setMaxTotal(50);//最大连接对象
+        config.setMaxTotal(100);//最大连接对象
         config.setMaxIdle(10);//最大闲置对象
         jedisPool = new JedisPool(config, "124.223.184.187", 6379, 5000, "jiang", 1);
     }
-//
+
 //    @PreDestroy
 //    public void end() {
 //        jedis.close();
@@ -50,9 +50,11 @@ public class UserService {
      * 在 zset 中添加: score = 用户登录的时间戳, member = 用户账号
      */
     public void userOnline(String userAccount, long time) {
-        Jedis jedis= jedisPool.getResource();
-        jedis.zadd("fU:oL", time, userAccount);  // fzteUser:online
-        jedis.close();
+        try (Jedis jedis = jedisPool.getResource()) {
+            jedis.zadd("fU:oL", time, userAccount);  // fzteUser:online
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

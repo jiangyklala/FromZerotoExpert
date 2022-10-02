@@ -27,12 +27,15 @@ public class UserController {
     @GetMapping("/ShowOnlineUsers")
     @ResponseBody
     public String showOnlineUsers() {
-        Jedis jedis= userService.jedisPool.getResource();
-        long currentTimeMillis = System.currentTimeMillis();
-        // 查出15秒内发送心跳信息的用户
-        String jsonString = JSON.toJSONString(jedis.zrangeByScore("fU:oL", currentTimeMillis - 6 * 1000, currentTimeMillis));
-        System.out.println(jsonString);
-        jedis.close();
+        String jsonString = "";
+        try(Jedis jedis = userService.jedisPool.getResource()) {
+            long currentTimeMillis = System.currentTimeMillis();
+            // 查出15秒内发送心跳信息的用户
+            jsonString = JSON.toJSONString(jedis.zrangeByScore("fU:oL", currentTimeMillis - 6 * 1000, currentTimeMillis));
+//        System.out.println(jsonString);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return jsonString;
     }
 
