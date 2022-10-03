@@ -35,7 +35,7 @@ public class UserService {
     @PostConstruct
     public void init() {
         jedisPool = new JedisPool(setJedisPoolConfig(), "124.223.184.187", 6379, 5000, "jiang", 1);
-        initJedisPool(jedisPool);
+//        initJedisPool(jedisPool);
     }
 
 //    @PreDestroy
@@ -107,6 +107,44 @@ public class UserService {
         }
     }
 
+    public void setOnlyLoginCert(String userAccount, HttpServletResponse response) {
+
+        // 头部增加 token
+        String onlyLoginCert = Long.toString(System.currentTimeMillis());
+        response.addHeader("Access-Control-Expose-Headers","token");
+        response.addHeader("token", onlyLoginCert);
+        System.out.println("token添加成功");
+
+        Jedis jedis = null;
+        try {
+            jedis = jedisPool.getResource();
+            jedis.hset("fU:" + userAccount, "lc", onlyLoginCert);  // lc : loginCert
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            jedis.close();
+        }
+    }
+
+    public void setOnlyLoginCert2(String userAccount, HttpServletResponse response) {
+
+        // 头部增加 Cookie
+        String onlyLoginCert = Long.toString(System.currentTimeMillis());
+        Cookie cookieLoginCert = new Cookie("loginCert", onlyLoginCert);
+        cookieLoginCert.setMaxAge(60 * 60 * 24);
+        response.addCookie(cookieLoginCert);
+
+        Jedis jedis = null;
+        try {
+            jedis = jedisPool.getResource();
+            jedis.hset("fU:" + userAccount, "lc", onlyLoginCert);  // lc : loginCert
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            jedis.close();
+        }
+    }
+
     /**
      * 更新用户登录凭证
      */
@@ -125,18 +163,18 @@ public class UserService {
             return false;
         }
 
-        // 更新唯一登录凭证
-        String onlyLoginCert = Long.toString(System.currentTimeMillis());
-        jedis.hset("fU:" + userAccount, "lc", onlyLoginCert);  // lc : loginCert
+//        // 更新唯一登录凭证
+//        String onlyLoginCert = Long.toString(System.currentTimeMillis());
+//        jedis.hset("fU:" + userAccount, "lc", onlyLoginCert);  // lc : loginCert
 
         // 更新 cookieUserAccount
         Cookie cookieUserAccount = new Cookie("fzteUser", userAccount);
         cookieUserAccount.setMaxAge(60 * 60 * 24);
         response.addCookie(cookieUserAccount);
-        // 更新 cookieLoginCert
-        Cookie cookieLoginCert = new Cookie("loginCert", onlyLoginCert);
-        cookieLoginCert.setMaxAge(60 * 60 * 24);
-        response.addCookie(cookieLoginCert);
+//        // 更新 cookieLoginCert
+//        Cookie cookieLoginCert = new Cookie("loginCert", onlyLoginCert);
+//        cookieLoginCert.setMaxAge(60 * 60 * 24);
+//        response.addCookie(cookieLoginCert);
 
         jedis.close();
         return true;
@@ -152,15 +190,15 @@ public class UserService {
         cookieUserAccount.setMaxAge(60 * 60 * 24);
         response.addCookie(cookieUserAccount);
 
-        // loginCert = 唯一登录凭证 创建Cookie
-        String onlyLoginCert = Long.toString(System.currentTimeMillis());
-        Cookie cookieLoginCert = new Cookie("loginCert", onlyLoginCert);
-        cookieLoginCert.setMaxAge(60 * 60 * 24);
-        response.addCookie(cookieLoginCert);
+        // loginCert = 唯一登录凭证 创建 token
+//        String onlyLoginCert = Long.toString(System.currentTimeMillis());
+//        Cookie cookieLoginCert = new Cookie("loginCert", onlyLoginCert);
+//        cookieLoginCert.setMaxAge(60 * 60 * 24);
+//        response.addCookie(cookieLoginCert);
 
         // redis中添加唯一登录凭证
         Jedis jedis= jedisPool.getResource();
-        jedis.hset("fU:" + nowUserAccount, "lc", onlyLoginCert);
+//        jedis.hset("fU:" + nowUserAccount, "lc", onlyLoginCert);
         jedis.expire("fU:" + nowUserAccount, 60 * 60 * 24);  // 设置自动登录期效
         jedis.close();
     }

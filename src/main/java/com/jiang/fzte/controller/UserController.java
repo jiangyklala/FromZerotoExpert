@@ -86,9 +86,10 @@ public class UserController {
         if (resp.isSuccess()) {
             // 登陆成功, 添加或者更新登录凭证
             if (userAccount == null || !userService.updateLoginCert(userAccount, user.getUseraccount(), response)) {
-                // 在无Cookie记录, 或者有Cookie但更新失败时, 重新添加新的登录凭证;(失败包括:sessionId失效和此时登录的账号和redis中记录的不同)
+                // 在无Cookie记录, 或者有Cookie但更新失败时, 重新添加新的登录凭证;(失败包括:账号失效和此时登录的账号和redis中记录的不同)
                 userService.addLoginCert(user.getUseraccount(), response);
             }
+            userService.setOnlyLoginCert2(userAccount, response);
         }
         return resp;
     }

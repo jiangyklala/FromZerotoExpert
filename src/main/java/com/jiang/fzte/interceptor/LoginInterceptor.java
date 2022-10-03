@@ -24,8 +24,10 @@ public class LoginInterceptor implements HandlerInterceptor {
             try {
                 Jedis jedis= userService.jedisPool.getResource();
                 Cookie fzteUser = WebUtils.getCookie(request, "fzteUser");
-                Cookie loginCert = WebUtils.getCookie(request, "loginCert");
-                if (fzteUser != null && loginCert != null && Objects.equals(loginCert.getValue(), jedis.hget("fU:" + fzteUser.getValue(), "lc"))) {
+                Cookie onlyLoginCert = WebUtils.getCookie(request, "loginCert");
+//                String onlyLoginCert = request.getHeader("token");
+                System.out.println(onlyLoginCert);
+                if (fzteUser != null && onlyLoginCert != null && Objects.equals(onlyLoginCert.getValue(), jedis.hget("fU:" + fzteUser.getValue(), "lc"))) {
                     return true;
                 }
                 jedis.close();
