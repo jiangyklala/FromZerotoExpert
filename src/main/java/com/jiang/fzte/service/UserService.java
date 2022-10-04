@@ -35,7 +35,7 @@ public class UserService {
     @PostConstruct
     public void init() {
         jedisPool = new JedisPool(setJedisPoolConfig(), "124.223.184.187", 6379, 5000, "jiang", 1);
-//        initJedisPool(jedisPool);
+        initJedisPool(jedisPool);
     }
 
 //    @PreDestroy
@@ -47,7 +47,7 @@ public class UserService {
      * 预热
      */
     public void initJedisPool(JedisPool jedisPool) {
-        int minIdle = 50;
+        int minIdle = 250;
         List<Jedis> minIdleJedisList = new ArrayList<>(minIdle);
         for (int i = 0; i < minIdle; i++) {
             Jedis jedis = null;
@@ -76,10 +76,10 @@ public class UserService {
      */
     public JedisPoolConfig setJedisPoolConfig() {
         JedisPoolConfig config = new JedisPoolConfig();
-        config.setMaxTotal(100);//最大连接对象
+        config.setMaxTotal(500);//最大连接对象
         config.setJmxEnabled(true);
-        config.setMaxIdle(50);//最大闲置对象
-        config.setMinIdle(50);//最小闲置对象
+        config.setMaxIdle(250);//最大闲置对象
+        config.setMinIdle(250);//最小闲置对象
         config.setTestOnBorrow(true); // 向资源池借用连接时是否做有效性检测
         config.setTestOnReturn(true); // 向资源池归还连接时是否做有效性检测
         config.setTestWhileIdle(true); // 是否在空闲资源检测时通过 ping 命令检测连接的有效性,无效连接将被销毁

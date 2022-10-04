@@ -21,18 +21,22 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (request.getCookies() != null) {
+            Jedis jedis = null;
             try {
-                Jedis jedis= userService.jedisPool.getResource();
+                jedis= userService.jedisPool.getResource();
                 Cookie fzteUser = WebUtils.getCookie(request, "fzteUser");
                 Cookie onlyLoginCert = WebUtils.getCookie(request, "loginCert");
 //                String onlyLoginCert = request.getHeader("token");
-                System.out.println(onlyLoginCert);
+//                System.out.println(onlyLoginCert);
                 if (fzteUser != null && onlyLoginCert != null && Objects.equals(onlyLoginCert.getValue(), jedis.hget("fU:" + fzteUser.getValue(), "lc"))) {
                     return true;
                 }
-                jedis.close();
             } catch (Exception e) {
                 return false;
+            } finally {
+                if (jedis != null) {
+                    jedis.close();
+                }
             }
         }
         response.sendRedirect("/Login");
