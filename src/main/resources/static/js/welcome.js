@@ -1,4 +1,133 @@
+window.onload = windowOnload;
 welcome();
+
+stillAlive();
+setInterval(stillAlive, 5 * 1000);
+setInterval(showOnlineUsers, 7 * 1000);
+
+function windowOnload() {
+    showOnlineUsers();
+    showIPPVUV();
+}
+
+function showIPPVUV() {
+    let time = new Date();
+    let today = getNowFormatDate(time);
+    let yesterday = getNowFormatDate(new Date(time.setDate(time.getDate() - 1)));
+
+    let htmlString = "<table><tr><td>&nbsp</td><td>IP</td><td>PV</td><td>UV</td></tr>" +
+        "<tr><td>" + today + "</td><td>" + getIP(today) + "</td><td>"+ getPV(today) + "</td><td>" + getUV(today) + "</td></tr>" +
+        "<tr><td>" + yesterday + "</td><td>" + getIP(yesterday) + "</td><td>"+ getPV(yesterday) + "</td><td>" + getUV(yesterday) + "</td></tr></table>";
+
+    console.log(htmlString);
+    document.getElementById("insertIPUVPV").innerHTML = htmlString;
+}
+
+function getIP(date) {
+    let ans = "";
+    $.ajax({
+        url: '/GetIP',
+        method: 'get',
+        data: {
+            date : date
+        },
+        async: false,
+        dataType: "json",
+        success: function (res) {
+            ans = String(res);
+        }
+    })
+    return ans;
+}
+
+function getUV(date) {
+    let ans;
+    $.ajax({
+        url: '/GetUV',
+        method: 'get',
+        data: {
+            date : date
+        },
+        async: false,
+        dataType: "json",
+        success: function (res) {
+            ans = res;
+        }
+    })
+    return ans;
+}
+
+function getPV(date) {
+    let ans;
+    $.ajax({
+        url: '/GetPV',
+        method: 'get',
+        data: {
+            date : date
+        },
+        async: false,
+        dataType: "json",
+        success: function (res) {
+            ans = res;
+        }
+    })
+    return ans;
+}
+
+
+//获取当前时间，格式YYYY-MM-DD
+function getNowFormatDate(date) {
+    const separator = "-";
+    const year = date.getFullYear();
+    let month = date.getMonth() + 1;
+    let strDate = date.getDate();
+    if (month >= 1 && month <= 9) {
+        month = "0" + month;
+    }
+    if (strDate >= 0 && strDate <= 9) {
+        strDate = "0" + strDate;
+    }
+    return year + separator + month + separator + strDate;
+}
+
+// 显示当前在线人数
+function showOnlineUsers() {
+    $.ajax({
+        url: '/ShowOnlineUsers',
+        method: 'get',
+        success: function (res) {
+            let htmlString = "<h2>当前在线人数:</h2><br>";
+            const users = JSON.parse(res);
+            for (let i = 0; i < users.length; ++i) {
+                htmlString = htmlString + "<h3>" + users[i] + "</h3><br>";
+            }
+            document.getElementById("insertOnlineUser").innerHTML = htmlString;
+        }
+    })
+}
+
+// 发送心跳信息
+function stillAlive() {
+    $.ajax({
+        url: '/StillAlive',
+        method: 'post'
+    })
+}
+
+// 欢迎语句
+function welcome() {
+    $.ajax({
+        url: '/Welcome',
+        method: 'get',
+        success: function (res) {
+            if (res.success === true) {
+                document.getElementById("insertWelcome").innerHTML = "<h2 style=\"text-align: center\">嗨, " + res.content + ", 欢迎您来到 from zero to expert</h2>";
+            } else {
+                window.location.href = "/Login";
+            }
+        }
+    })
+}
 
 // var websocket = null;
 //
@@ -48,47 +177,6 @@ welcome();
 //     setMessageInnerHTML(message + "&#13;");
 // }
 
-stillAlive();
-setInterval(stillAlive, 5 * 1000);
-showOnlineUsers();
-setInterval(showOnlineUsers, 7 * 1000);
-
-function showOnlineCounts() {
-    websocket.send("1");
-}
-
-function welcome() {
-    $.ajax({
-        url: '/Welcome',
-        method: 'get',
-        success: function (res) {
-            if (res.success === true) {
-                document.getElementById("insertWelcome").innerHTML = "<h2 style=\"text-align: center\">嗨, " + res.content + ", 欢迎您来到 from zero to expert</h2>";
-            } else {
-                window.location.href = "/Login";
-            }
-        }
-    })
-}
-
-function stillAlive() {
-    $.ajax({
-        url: '/StillAlive',
-        method: 'post'
-    })
-}
-
-function showOnlineUsers() {
-    $.ajax({
-        url: '/ShowOnlineUsers',
-        method: 'get',
-        success: function (res) {
-            let htmlString = "<h2>当前在线人数:</h2><br>";
-            const users = JSON.parse(res);
-            for (let i = 0; i < users.length; ++i) {
-                htmlString = htmlString + "<h3>" + users[i] + "</h3><br>";
-            }
-            document.getElementById("insertOnlineUser").innerHTML = htmlString;
-        }
-    })
-}
+// function showOnlineCounts() {
+//     websocket.send("1");
+// }
