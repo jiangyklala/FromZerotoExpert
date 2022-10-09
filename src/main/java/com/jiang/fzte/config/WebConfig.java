@@ -1,8 +1,6 @@
 package com.jiang.fzte.config;
 
 import com.jiang.fzte.interceptor.LoginInterceptor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -34,7 +32,11 @@ public class WebConfig implements WebMvcConfigurer {
                         "/Register",
                         "/Login",
                         "/Welcome",
-                        "/UserOffline",
+                        "/GetIP",
+                        "/GetUV",
+                        "/GetPV",
+                        "/ShowOnlineUsers",
+                        "/StillAlive",
                         "/**/*.html",
                         "/**/*.js",
                         "/**/*.css"

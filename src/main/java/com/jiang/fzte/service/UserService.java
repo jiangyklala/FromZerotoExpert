@@ -35,7 +35,7 @@ public class UserService {
     @PostConstruct
     public void init() {
         jedisPool = new JedisPool(setJedisPoolConfig(), "124.223.184.187", 6379, 5000, "jiang", 1);
-        initJedisPool(jedisPool);
+//        initJedisPool(jedisPool);
     }
 
     /**

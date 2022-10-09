@@ -1,6 +1,7 @@
 package com.jiang.fzte.interceptor;
 
 import com.jiang.fzte.service.UserService;
+import com.jiang.fzte.util.IpUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.util.WebUtils;
@@ -10,6 +11,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Objects;
 
 @Component
@@ -20,26 +23,33 @@ public class LoginInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        if (request.getCookies() != null) {
-            Jedis jedis = null;
-            try {
-                jedis= userService.jedisPool.getResource();
-                Cookie fzteUser = WebUtils.getCookie(request, "fzteUser");
-                Cookie onlyLoginCert = WebUtils.getCookie(request, "loginCert");
-//                String onlyLoginCert = request.getHeader("token");
-//                System.out.println(onlyLoginCert);
-                if (fzteUser != null && onlyLoginCert != null && Objects.equals(onlyLoginCert.getValue(), jedis.hget("fU:" + fzteUser.getValue(), "lc"))) {
-                    return true;
-                }
-            } catch (Exception e) {
-                return false;
-            } finally {
-                if (jedis != null) {
-                    jedis.close();
-                }
-            }
-        }
+        String nowTime = new SimpleDateFormat("yyyy-MM-dd").format(new Date()); // 只要年月日
+        Cookie fzteUser = WebUtils.getCookie(request, "fzteUser");
+        Jedis jedis = null;
+        jedis= userService.jedisPool.getResource();
+
+        // 记录PV
+        jedis.incr("fU:pv:" + nowTime);
+        // 记录IP
+        String ip = IpUtils.getIpAddr(request);
+        jedis.pfadd("fU:ip:" + nowTime, ip);
+        // 记录UV
+        if (fzteUser != null) jedis.pfadd("fU:uv:" + nowTime, fzteUser.getValue());
+
+        // 检查登录凭证
+        if (request.getCookies() != null && isValidLoginCert(jedis, request, fzteUser)) return true;
+
+        jedis.close();
         response.sendRedirect("/Login");
         return false;
     }
+
+    boolean isValidLoginCert(Jedis jedis, HttpServletRequest request, Cookie fzteUser) {
+        Cookie onlyLoginCert = WebUtils.getCookie(request, "loginCert");
+        if (fzteUser != null && onlyLoginCert != null && Objects.equals(onlyLoginCert.getValue(), jedis.hget("fU:" + fzteUser.getValue(), "lc"))) {
+            return true;
+        }
+        return false;
+    }
+
 }
