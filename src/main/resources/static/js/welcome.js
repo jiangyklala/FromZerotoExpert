@@ -12,12 +12,13 @@ function windowOnload() {
 
 function showIPPVUV() {
     let time = new Date();
-    let today = getNowFormatDate(time);
-    let yesterday = getNowFormatDate(new Date(time.setDate(time.getDate() - 1)));
+    let today = getNowFormatDate("", time);
+    let yesterday = getNowFormatDate("", new Date(time.setDate(time.getDate() - 1)));
 
-    let htmlString = "<table><tr><td>&nbsp</td><td>IP</td><td>PV</td><td>UV</td></tr>" +
-        "<tr><td>" + today + "</td><td>" + getIP(today) + "</td><td>"+ getPV(today) + "</td><td>" + getUV(today) + "</td></tr>" +
-        "<tr><td>" + yesterday + "</td><td>" + getIP(yesterday) + "</td><td>"+ getPV(yesterday) + "</td><td>" + getUV(yesterday) + "</td></tr></table>";
+    let htmlString = "<table><tr><th>DATE</th><th>IP</th><th>PV</th><th>UV</th></tr>" +
+        "<tr><td>" + getNowFormatDate("-", time) + "</td><td>" + getIP(today) + "</td><td>"+ getPV(today) + "</td><td>" + getUV(today) + "</td></tr>" +
+        "<tr><td>" + getNowFormatDate("-", new Date(time.setDate(time.getDate() - 1))) + "</td><td>" + getIP(yesterday) + "</td><td>"+ getPV(yesterday) + "</td><td>" + getUV(yesterday) + "</td></tr></table>";
+
 
     console.log(htmlString);
     document.getElementById("insertIPUVPV").innerHTML = htmlString;
@@ -76,8 +77,7 @@ function getPV(date) {
 
 
 //获取当前时间，格式YYYY-MM-DD
-function getNowFormatDate(date) {
-    const separator = "-";
+function getNowFormatDate(separator, date) {
     const year = date.getFullYear();
     let month = date.getMonth() + 1;
     let strDate = date.getDate();

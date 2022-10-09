@@ -23,7 +23,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String nowTime = new SimpleDateFormat("yyyy-MM-dd").format(new Date()); // 只要年月日
+        String nowTime = new SimpleDateFormat("yyyyMMdd").format(new Date()); // 只要年月日
         Cookie fzteUser = WebUtils.getCookie(request, "fzteUser");
         Jedis jedis = null;
         jedis= userService.jedisPool.getResource();
