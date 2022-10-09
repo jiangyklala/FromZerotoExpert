@@ -38,11 +38,6 @@ public class UserService {
         initJedisPool(jedisPool);
     }
 
-//    @PreDestroy
-//    public void end() {
-//        jedis.close();
-//    }
-
     /**
      * 预热
      */
