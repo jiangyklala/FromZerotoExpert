@@ -13,3 +13,5 @@ POST http://localhost:8088/disallowWord/add?value=lala
 POST http://localhost:8088/disallowWord/delete?value=lala
 
 ###
+
+GET http://localhost:8088/GetIP?date=2022-10-09

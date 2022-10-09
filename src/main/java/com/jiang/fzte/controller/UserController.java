@@ -21,8 +21,57 @@ public class UserController {
     private UserService userService;
 
     /**
+     * 获取访问的IP数
+     * @return null - 该天数据不存在
+     */
+    @GetMapping("/GetIP")
+    @ResponseBody
+    public String getIP(String date) {
+        Jedis jedis = null;
+        jedis = UserService.jedisPool.getResource();
+
+        long res = jedis.pfcount("fU:ip:" + date);
+        if (res == 0) return null;
+
+        jedis.close();
+        return Long.toString(res);
+    }
+
+    /**
+     * 获取访问的UV数
+     * @return null - 该天数据不存在
+     */
+    @GetMapping("/GetUV")
+    @ResponseBody
+    public String getUV(String date) {
+        Jedis jedis = null;
+        jedis = UserService.jedisPool.getResource();
+
+        long res = jedis.pfcount("fU:uv:" + date);
+        if (res == 0) return null;
+
+        jedis.close();
+        return Long.toString(res);
+    }
+
+    /**
+     * 获取访问的PV数
+     * @return null - 该天数据不存在
+     */
+    @GetMapping("/GetPV")
+    @ResponseBody
+    public String getPV(String date) {
+        Jedis jedis = null;
+        jedis = UserService.jedisPool.getResource();
+
+        String res = jedis.get("fU:pv:" + date);
+
+        jedis.close();
+        return res;
+    }
+
+    /**
      * 显示当前在线人数及其账号
-     * @return
      */
     @GetMapping("/ShowOnlineUsers")
     @ResponseBody
@@ -34,7 +83,6 @@ public class UserController {
             long currentTimeMillis = System.currentTimeMillis();
             // 查出15秒内发送心跳信息的用户
             jsonString = JSON.toJSONString(jedis.zrangeByScore("fU:oL", currentTimeMillis - 6 * 1000, currentTimeMillis));
-//        System.out.println(jsonString);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
