@@ -30,15 +30,12 @@ public class LoginInterceptor implements HandlerInterceptor {
 
         // 记录PV
         jedis.incr("fU:pv:" + nowTime);
-        jedis.expire("fU:pv:" + nowTime, 30L * 24 * 60 * 60 * 1000);
         // 记录IP
         String ip = IpUtils.getIpAddr(request);
         jedis.pfadd("fU:ip:" + nowTime, ip);
-        jedis.expire("fU:ip:" + nowTime, 30L * 24 * 60 * 60 * 1000);
 
         // 记录UV
         if (fzteUser != null) jedis.pfadd("fU:uv:" + nowTime, fzteUser.getValue());
-        jedis.expire("fU:uv:" + nowTime, 30L * 24 * 60 * 60 * 1000);
 
 
         // 检查登录凭证

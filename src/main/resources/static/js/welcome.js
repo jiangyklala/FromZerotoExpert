@@ -12,12 +12,13 @@ function windowOnload() {
 
 function showIPPVUV() {
     let time = new Date();
+    let time2 = new Date();
     let today = getNowFormatDate("", time);
     let yesterday = getNowFormatDate("", new Date(time.setDate(time.getDate() - 1)));
 
     let htmlString = "<table><tr><th>DATE</th><th>IP</th><th>PV</th><th>UV</th></tr>" +
-        "<tr><td>" + getNowFormatDate("-", time) + "</td><td>" + getIP(today) + "</td><td>"+ getPV(today) + "</td><td>" + getUV(today) + "</td></tr>" +
-        "<tr><td>" + getNowFormatDate("-", new Date(time.setDate(time.getDate() - 1))) + "</td><td>" + getIP(yesterday) + "</td><td>"+ getPV(yesterday) + "</td><td>" + getUV(yesterday) + "</td></tr></table>";
+        "<tr><td>" + getNowFormatDate("-", time2) + "</td><td>" + getIP(today) + "</td><td>"+ getPV(today) + "</td><td>" + getUV(today) + "</td></tr>" +
+        "<tr><td>" + getNowFormatDate("-", new Date(time2.setDate(time2.getDate() - 1))) + "</td><td>" + getIP(yesterday) + "</td><td>"+ getPV(yesterday) + "</td><td>" + getUV(yesterday) + "</td></tr></table>";
 
 
     console.log(htmlString);

@@ -82,7 +82,7 @@
 
 **IP:** 通过 HttpServeletRequest 获取；redis中存：fU:ip:当前日期 = ip；使用 HyperLogLog
 
-**PV: ** 用户每次刷新网页 + 1； redis中存：fU:pv:当前日期 = 0; 使用 字符串
+**PV:** 用户每次刷新网页 + 1； redis中存：fU:pv:当前日期 = 0; 使用 字符串
 
 **UV：** 通过用户浏览器中的 Cookie：【fzteUser = 用户账号】来确认一个访客；redis中存：fU:uv:当前日期 = 用户账号；使用 HyperLogLog
 
