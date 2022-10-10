@@ -21,7 +21,7 @@ public class IPUVPVTransfer {
     @Resource
     Ipuvpv_dataMapper ipuvpv_dataMapper;
 
-    @Scheduled(cron = "0 0 3 * * ?")
+    @Scheduled(cron = "0 0 3 * * ?") // 每天凌晨3点执行
     public void ipuvpvTransfer() {
         Date date = new Date();
         String twoDaysBefore = new SimpleDateFormat("yyyyMMdd").format(new Date(date.getTime() - 2 * 24 * 60 * 60 * 1000)); // 只要年月日
