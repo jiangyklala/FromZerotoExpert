@@ -26,22 +26,29 @@ public class LoginInterceptor implements HandlerInterceptor {
         String nowTime = new SimpleDateFormat("yyyyMMdd").format(new Date()); // 只要年月日
         Cookie fzteUser = WebUtils.getCookie(request, "fzteUser");
         Jedis jedis = null;
-        jedis= userService.jedisPool.getResource();
 
-        // 记录PV
-        jedis.incr("fU:pv:" + nowTime);
-        // 记录IP
-        String ip = IpUtils.getIpAddr(request);
-        jedis.pfadd("fU:ip:" + nowTime, ip);
+        try {
+            jedis = userService.jedisPool.getResource();
 
-        // 记录UV
-        if (fzteUser != null) jedis.pfadd("fU:uv:" + nowTime, fzteUser.getValue());
+            // 记录PV
+            jedis.incr("fU:pv:" + nowTime);
+            // 记录IP
+            String ip = IpUtils.getIpAddr(request);
+            jedis.pfadd("fU:ip:" + nowTime, ip);
+
+            // 记录UV
+            if (fzteUser != null) jedis.pfadd("fU:uv:" + nowTime, fzteUser.getValue());
 
 
-        // 检查登录凭证
-        if (request.getCookies() != null && isValidLoginCert(jedis, request, fzteUser)) return true;
-
-        jedis.close();
+            // 检查登录凭证
+            if (request.getCookies() != null && isValidLoginCert(jedis, request, fzteUser)) return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (jedis != null) {
+                jedis.close();
+            }
+        }
         response.sendRedirect("/Login");
         return false;
     }

@@ -22,18 +22,23 @@ public class UserController {
 
     /**
      * 获取访问的IP数
-     * @return null - 该天数据不存在
+     * @return null/-1 - 该天数据不存在
      */
     @GetMapping("/GetIP")
     @ResponseBody
     public String getIP(String date) {
         Jedis jedis = null;
-        jedis = UserService.jedisPool.getResource();
+        long res = -1;
+        try {
+            jedis = UserService.jedisPool.getResource();
 
-        long res = jedis.pfcount("fU:ip:" + date);
-        if (res == 0) return null;
-
-        jedis.close();
+            res = jedis.pfcount("fU:ip:" + date);
+            if (res == 0) return null;
+        } catch (Exception e) {
+            if (jedis != null) {
+                jedis.close();
+            }
+        }
         return Long.toString(res);
     }
 
@@ -45,12 +50,17 @@ public class UserController {
     @ResponseBody
     public String getUV(String date) {
         Jedis jedis = null;
-        jedis = UserService.jedisPool.getResource();
+        long res = -1;
+        try {
+            jedis = UserService.jedisPool.getResource();
 
-        long res = jedis.pfcount("fU:uv:" + date);
-        if (res == 0) return null;
-
-        jedis.close();
+            res = jedis.pfcount("fU:uv:" + date);
+            if (res == 0) return null;
+        } catch (Exception e) {
+            if (jedis != null) {
+                jedis.close();
+            }
+        }
         return Long.toString(res);
     }
 
@@ -62,11 +72,16 @@ public class UserController {
     @ResponseBody
     public String getPV(String date) {
         Jedis jedis = null;
-        jedis = UserService.jedisPool.getResource();
+        String res = null;
+        try {
+            jedis = UserService.jedisPool.getResource();
 
-        String res = jedis.get("fU:pv:" + date);
-
-        jedis.close();
+            res = jedis.get("fU:pv:" + date);
+        } catch (Exception e) {
+            if (jedis != null) {
+                jedis.close();
+            }
+        }
         return res;
     }
 
