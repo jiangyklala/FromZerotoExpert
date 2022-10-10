@@ -35,7 +35,7 @@ public class UserAccountLimit {
      * 根据 userAccount 查找是否存在这个 user
      * @return 是 - 返回 user 对象; 否 - 返回 null
      */
-    public static User existAUser(String userAccount, UserExample userExample, UserMapper userMapper) {
+    public static User existAUserByAc(String userAccount, UserExample userExample, UserMapper userMapper) {
         UserExample.Criteria criteria = userExample.createCriteria();
         criteria.andUseraccountEqualTo(userAccount);
         List<User> userList = userMapper.selectByExample(userExample);  // 此处虽然只有一条也只能用List<User>接受
@@ -50,7 +50,7 @@ public class UserAccountLimit {
      * 一定要确保需要返回的 user 存在!!! 根据 userAccount 返回这个 user
      * @return 是 - 返回 user 对象; 否 - 返回 null
      */
-    public static User selectAUser(String userAccount, UserExample userExample, UserMapper userMapper) {
+    public static User selectAUserByAc(String userAccount, UserExample userExample, UserMapper userMapper) {
         UserExample.Criteria criteria = userExample.createCriteria();
         criteria.andUseraccountEqualTo(userAccount);
         List<User> userList = userMapper.selectByExample(userExample);  // 此处虽然只有一条也只能用List<User>接受

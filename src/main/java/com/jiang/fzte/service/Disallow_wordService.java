@@ -30,6 +30,9 @@ public class Disallow_wordService {
         }
     }
 
+    /**
+     * 增加一个敏感词
+     */
     public void add(String value, CommonResp<Disallow_word> commonResp) {
         if (Objects.equals(value, "")) {
             commonResp.setSuccess(false);
@@ -38,6 +41,9 @@ public class Disallow_wordService {
         Disallow_wordService.root.insert(value, Disallow_wordService.root);
     }
 
+    /**
+     * 删除一个敏感词
+     */
     public void delete(String value, CommonResp<Disallow_word> commonResp) {
         if (Objects.equals(value, "")) {
             commonResp.setSuccess(false);
@@ -46,8 +52,9 @@ public class Disallow_wordService {
         Disallow_wordService.root.delete(value, Disallow_wordService.root);
     }
 
-
-
+    /**
+     * 查询所有敏感词
+     */
     public List<String> selectValue() {
         List<Disallow_word> disallow_wordList = disallow_wordMapper.selectByExample(null);
         List<String> impolitePhrases = new ArrayList<>();

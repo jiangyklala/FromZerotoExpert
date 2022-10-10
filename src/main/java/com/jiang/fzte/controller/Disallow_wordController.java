@@ -18,6 +18,9 @@ public class Disallow_wordController {
     @Resource
     Disallow_wordService disallow_wordService;
 
+    /**
+     * 增加敏感词
+     */
     @PostMapping("/add")
     @ResponseBody
     public CommonResp<Disallow_word> add(Disallow_word disallow_word) {
@@ -26,6 +29,9 @@ public class Disallow_wordController {
         return commonResp;
     }
 
+    /**
+     * 删除敏感词
+     */
     @PostMapping("/delete")
     @ResponseBody
     public CommonResp<Disallow_word> delete(Disallow_word disallow_word) {

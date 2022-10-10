@@ -35,7 +35,7 @@ public class UserService {
     @PostConstruct
     public void init() {
         jedisPool = new JedisPool(setJedisPoolConfig(), "124.223.184.187", 6379, 5000, "jiang", 1);
-//        initJedisPool(jedisPool);
+        initJedisPool(jedisPool);
     }
 
     /**
@@ -81,7 +81,7 @@ public class UserService {
         config.setTimeBetweenEvictionRuns(Duration.ofSeconds(5));  // 空闲资源的检测周期
         config.setMaxWait(Duration.ofSeconds(5)); // 当资源池连接用尽后，调用者的最大等待时间
         config.setMinEvictableIdleTime(Duration.ofSeconds(10));
-        config.setBlockWhenExhausted(true);
+        config.setBlockWhenExhausted(true); // 当获取不到连接时应阻塞
         return config;
     }
 
@@ -158,18 +158,10 @@ public class UserService {
             return false;
         }
 
-//        // 更新唯一登录凭证
-//        String onlyLoginCert = Long.toString(System.currentTimeMillis());
-//        jedis.hset("fU:" + userAccount, "lc", onlyLoginCert);  // lc : loginCert
-
         // 更新 cookieUserAccount
         Cookie cookieUserAccount = new Cookie("fzteUser", userAccount);
         cookieUserAccount.setMaxAge(60 * 60 * 24);
         response.addCookie(cookieUserAccount);
-//        // 更新 cookieLoginCert
-//        Cookie cookieLoginCert = new Cookie("loginCert", onlyLoginCert);
-//        cookieLoginCert.setMaxAge(60 * 60 * 24);
-//        response.addCookie(cookieLoginCert);
 
         jedis.close();
         return true;
@@ -185,15 +177,8 @@ public class UserService {
         cookieUserAccount.setMaxAge(60 * 60 * 24);
         response.addCookie(cookieUserAccount);
 
-        // loginCert = 唯一登录凭证 创建 token
-//        String onlyLoginCert = Long.toString(System.currentTimeMillis());
-//        Cookie cookieLoginCert = new Cookie("loginCert", onlyLoginCert);
-//        cookieLoginCert.setMaxAge(60 * 60 * 24);
-//        response.addCookie(cookieLoginCert);
-
         // redis中添加唯一登录凭证
         Jedis jedis= jedisPool.getResource();
-//        jedis.hset("fU:" + nowUserAccount, "lc", onlyLoginCert);
         jedis.expire("fU:" + nowUserAccount, 60 * 60 * 24);  // 设置自动登录期效
         jedis.close();
     }
@@ -225,7 +210,7 @@ public class UserService {
         }
 
         // 判断账号唯一
-        if (null != UserAccountLimit.existAUser(userAccount, new UserExample(), userMapper)) {
+        if (null != UserAccountLimit.existAUserByAc(userAccount, new UserExample(), userMapper)) {
             resp.setSuccess(false);
             resp.setMessage(resp.getMessage() + "账号重复; ");
             return;
@@ -267,7 +252,7 @@ public class UserService {
         }
 
         // 判断是否未注册
-        if (null == UserAccountLimit.existAUser(userAccount, new UserExample(), userMapper)) {
+        if (null == UserAccountLimit.existAUserByAc(userAccount, new UserExample(), userMapper)) {
             resp.setSuccess(false);
             resp.setMessage("账号未注册");
             return;
@@ -313,7 +298,7 @@ public class UserService {
         }
 
         // 判断密码是否正确
-        User oldUser = UserAccountLimit.selectAUser(user.getUseraccount(), new UserExample(), userMapper);
+        User oldUser = UserAccountLimit.selectAUserByAc(user.getUseraccount(), new UserExample(), userMapper);  // 这里user在数据库中必定存在: 如果不存在, 在第一个判断中已经返回了
         String nowPassword = Md5Encrypt.mdtEncrypt(user.getPassword(), oldUser.getSalt(), (long) user.getPassword().length());
         if (!Objects.equals(oldUser.getPassword(), nowPassword)) {
             resp.setSuccess(false);
