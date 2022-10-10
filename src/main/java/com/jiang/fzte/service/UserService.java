@@ -78,9 +78,9 @@ public class UserService {
         config.setTestOnBorrow(true); // 向资源池借用连接时是否做有效性检测
         config.setTestOnReturn(true); // 向资源池归还连接时是否做有效性检测
         config.setTestWhileIdle(true); // 是否在空闲资源检测时通过 ping 命令检测连接的有效性,无效连接将被销毁
+        config.setTimeBetweenEvictionRuns(Duration.ofSeconds(5));  // 空闲资源的检测周期
         config.setMaxWait(Duration.ofSeconds(5)); // 当资源池连接用尽后，调用者的最大等待时间
         config.setMinEvictableIdleTime(Duration.ofSeconds(10));
-        config.setTimeBetweenEvictionRuns(Duration.ofSeconds(5));  // 空闲资源的检测周期
         config.setBlockWhenExhausted(true);
         return config;
     }
