@@ -42,3 +42,14 @@ insert into disallow_word(value) values ('lala');
 alter table user add salt varchar(225) default(NULL);
 alter table user add useraccount varchar(50) default(NULL);
 
+drop table if exists `ipuvpv_data`;
+create table `ipuvpv_data` (
+                        `id` bigint auto_increment not null,
+                        `date` varchar(50) default(NULL),
+                        `ip` varchar(50) not null default(NULL),
+                        `pv` varchar(50) not null default(NULL),
+                        `uv` varchar(50) not null default(NULL),
+                        `comment` varchar(50) default(NULL),
+                        primary key (`id`)
+) engine=innodb default charset=utf8mb4 comment='IPUVPV数据';
+
