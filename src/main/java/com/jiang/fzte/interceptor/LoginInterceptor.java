@@ -30,17 +30,16 @@ public class LoginInterceptor implements HandlerInterceptor {
         try {
             jedis = userService.jedisPool.getResource();
 
+            // 记录PV
+            jedis.incr("fU:pv:" + nowTime);
+            // 记录IP
+            String ip = IpUtils.getIpAddr(request);
+            jedis.pfadd("fU:ip:" + nowTime, ip);
+            // 记录UV
+            if (fzteUser != null) jedis.pfadd("fU:uv:" + nowTime, fzteUser.getValue());
+
             // 验证登录凭证
             if (request.getCookies() != null && isValidLoginCert(jedis, request, fzteUser)) {
-
-                // 记录PV
-                jedis.incr("fU:pv:" + nowTime);
-                // 记录IP
-                String ip = IpUtils.getIpAddr(request);
-                jedis.pfadd("fU:ip:" + nowTime, ip);
-                // 记录UV
-                if (fzteUser != null) jedis.pfadd("fU:uv:" + nowTime, fzteUser.getValue());
-
                 return true;
             }
         } catch (Exception e) {
