@@ -147,12 +147,13 @@ public class UserController {
         userService.isLoginUserAccount(user.getUseraccount(), resp);
         userService.isLoginPassword(user, resp);  // 这里需要传入user, 获取其账号和密码
         if (resp.isSuccess()) {
-            // 登陆成功, 添加或者更新登录凭证
+            // 登陆成功, 先添加唯一登录凭证
+            userService.setOnlyLoginCert(user.getUseraccount(), response);
+            // 添加或者更新登录凭证
             if (userAccount == null || !userService.updateLoginCert(userAccount, user.getUseraccount(), response)) {
                 // 在无Cookie记录, 或者有Cookie但更新失败时, 重新添加新的登录凭证;(失败包括:账号失效和此时登录的账号和redis中记录的不同)
                 userService.addLoginCert(user.getUseraccount(), response);
             }
-            userService.setOnlyLoginCert2(user.getUseraccount(), response);
         }
         return resp;
     }

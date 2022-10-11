@@ -104,25 +104,6 @@ public class UserService {
 
     public void setOnlyLoginCert(String userAccount, HttpServletResponse response) {
 
-        // 头部增加 token
-        String onlyLoginCert = Long.toString(System.currentTimeMillis());
-        response.addHeader("Access-Control-Expose-Headers","token");
-        response.addHeader("token", onlyLoginCert);
-        System.out.println("token添加成功");
-
-        Jedis jedis = null;
-        try {
-            jedis = jedisPool.getResource();
-            jedis.hset("fU:" + userAccount, "lc", onlyLoginCert);  // lc : loginCert
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            jedis.close();
-        }
-    }
-
-    public void setOnlyLoginCert2(String userAccount, HttpServletResponse response) {
-
         // 头部增加 Cookie
         String onlyLoginCert = Long.toString(System.currentTimeMillis());
         Cookie cookieLoginCert = new Cookie("loginCert", onlyLoginCert);
@@ -140,30 +121,56 @@ public class UserService {
         }
     }
 
+    public void setOnlyLoginCert2(String userAccount, HttpServletResponse response) {
+
+        // 头部增加 token
+        String onlyLoginCert = Long.toString(System.currentTimeMillis());
+        response.addHeader("Access-Control-Expose-Headers","token");
+        response.addHeader("token", onlyLoginCert);
+        System.out.println("token添加成功");
+
+        Jedis jedis = null;
+        try {
+            jedis = jedisPool.getResource();
+            jedis.hset("fU:" + userAccount, "lc", onlyLoginCert);  // lc : loginCert
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            jedis.close();
+        }
+    }
+
     /**
      * 更新用户登录凭证
      */
     public boolean updateLoginCert(String userAccount, String nowUserAccount, HttpServletResponse response) {
         Jedis jedis= jedisPool.getResource();
-        // 更新 userAccount
-        if (jedis.expire("fU:" + userAccount, 60 * 60 * 24) == 0) {
-            // userAccount失效, 即找不到这个key
-            return false;
+        try {
+
+            //  此时登录的账号和redis中记录的不同, 直接返回添加新凭证
+            if (!Objects.equals(userAccount, nowUserAccount)) {
+//                错误的: 删除原来的用户记录, 减少服务器空间消耗
+//                jedis.expire("fU:" + userAccount, 0);
+                return false;
+            }
+
+            // redis中更新 userAccount 有效期
+            if (jedis.expire("fU:" + userAccount, 60 * 60 * 24) == 0) {
+                // userAccount失效(24小时未登录了), 即找不到这个key
+                return false;
+            }
+
+            // 更新 cookieUserAccount
+            Cookie cookieUserAccount = new Cookie("fzteUser", userAccount);
+            cookieUserAccount.setMaxAge(60 * 60 * 24);
+            response.addCookie(cookieUserAccount);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (jedis != null) {
+                jedis.close();
+            }
         }
-
-        //  此时登录的账号和redis中记录的不同
-        if (!Objects.equals(userAccount, nowUserAccount)) {
-            // 删除原来的用户记录, 减少服务器空间消耗
-            jedis.expire("fU:" + userAccount, 0);
-            return false;
-        }
-
-        // 更新 cookieUserAccount
-        Cookie cookieUserAccount = new Cookie("fzteUser", userAccount);
-        cookieUserAccount.setMaxAge(60 * 60 * 24);
-        response.addCookie(cookieUserAccount);
-
-        jedis.close();
         return true;
     }
 
@@ -177,10 +184,17 @@ public class UserService {
         cookieUserAccount.setMaxAge(60 * 60 * 24);
         response.addCookie(cookieUserAccount);
 
-        // redis中添加唯一登录凭证
+        // redis中更新账号信息的期效(必定存在此hash键, 因为在controller中登陆成功后先添加的唯一登录凭证)
         Jedis jedis= jedisPool.getResource();
-        jedis.expire("fU:" + nowUserAccount, 60 * 60 * 24);  // 设置自动登录期效
-        jedis.close();
+        try {
+            jedis.expire("fU:" + nowUserAccount, 60 * 60 * 24);  // 设置自动登录期效
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (jedis != null) {
+                jedis.close();
+            }
+        }
     }
 
     /**
