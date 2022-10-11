@@ -24,11 +24,11 @@
     + 不符合"注册"时的限制
     + 密码错误
 ### 自动登录
-  1. **首次登录:** 登录时生成Cookie: fzteUser-sessionId, 同时在 redis 中以哈希存储用户信息: key: sessionId field:name value:userName
+  1. **首次登录:** 登录时生成Cookie: fzteUser-userAccount, 同时在 redis 中以hash存储用户信息: key: userAccount 暂无 field 和 value；在我的实现中用户登录成功后先添加唯一登录凭证，这个凭证为 key:userAccount field:lc value:xxx, 所以到添加用户登录凭证时，在redis中一定存在这个账号的信息。而我的用户登录凭证只是需要redis中存在这个key = userAccount，所以此时只需更新其有效期即可。
   2. **二次登录:** 登录时检测Cookie,
-     + 若有, 若这次登录的账号和上次相同更新 Cooike 和 redis 中的键有效期；若不相同，删除上次的用户信息，创建新账号的信息
+     + 若有, Cookie的值即为上次登录的账号，若这次登录的账号和上次相同则更新 Cooike 和 redis 中的键有效期；若不相同，创建新账号的信息（此时不能删除旧账号的信息：若此时旧账号在其他地方登录，那它的信息莫名其妙的就没了，要重新登陆。
      + 如无, 进行1.
-  3. **访问首页:** 根据是否有Cookie, 且 Cookie 中的 sessionId 在 redis 中是否过期(防止用户手动更改 Cookie 有效期)实现自动登录
+  3. **访问首页:** 根据是否有Cookie, 且 Cookie 中的 userAccount 在 redis 中是否过期(防止用户手动更改 Cookie 有效期)实现自动登录
 ### 不允许多个设备同时在线
 将用户登录时的时间戳作为唯一登录凭证，一份作为 Cookie 【loginCert = 时间戳】放在用户的浏览器中，一份记录在redis中：【lc = 时间戳 】（loginCertifate）。
 
