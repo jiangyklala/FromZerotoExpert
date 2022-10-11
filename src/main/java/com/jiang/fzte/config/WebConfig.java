@@ -31,10 +31,10 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns(
                         "/Register",
                         "/Login",
-                        "/Welcome",
                         "/GetIP",
                         "/GetUV",
                         "/GetPV",
+                        "/Welcome",
                         "/ShowOnlineUsers",
                         "/StillAlive",
                         "/**/*.html",
