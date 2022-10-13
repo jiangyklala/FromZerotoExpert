@@ -115,7 +115,7 @@ function getNowFormatDate(separator, date) {
 
 function showOnlineUsersTimer() {
     if (!flagShowOnlineUsers) return;
-    showOnlineUsersTimer();
+    showOnlineUsers();
     setTimeout(stillAliveTimer, timeShowOnlineUsers);
 }
 
