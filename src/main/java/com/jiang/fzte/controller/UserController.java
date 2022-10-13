@@ -22,6 +22,38 @@ public class UserController {
     private UserService userService;
 
     /**
+     * 增加用户白名单
+     * @return 返回添加成功的个数; "-1"--添加失败
+     */
+    @PostMapping("/AddUserWhiteIP")
+    @ResponseBody
+    public String addUserWhiteIP(String key) {
+        long res = -1L;
+        try(Jedis jedis = userService.jedisPool.getResource()) {
+            res = jedis.sadd("fU:wI", key);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Long.toString(res);
+    }
+
+    /**
+     * 增加用户白名单
+     * @return 返回删除成功的个数; "-1"--删除失败
+     */
+    @PostMapping("/DelUserWhiteIP")
+    @ResponseBody
+    public String delUserWhiteIP(String key) {
+        long res = -1L;
+        try(Jedis jedis = userService.jedisPool.getResource()) {
+            res = jedis.srem("fU:wI", key);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Long.toString(res);
+    }
+
+    /**
      * 获取访问的IP数
      * @return null/-1 - 该天数据不存在
      */
