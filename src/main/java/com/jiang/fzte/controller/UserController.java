@@ -180,7 +180,7 @@ public class UserController {
     /**
      * 首页
      */
-    @VisitLimit(limit = 2, sec = 8)
+    @VisitLimit(limit = 2, sec = 10)
     @GetMapping("/FromZerotoExpert")
     public String fromZerotoExpert() {
         return "FromZerotoExpert";

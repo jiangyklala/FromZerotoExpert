@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -39,34 +40,12 @@ public class LoginInterceptor implements HandlerInterceptor {
             // 记录UV
             if (fzteUser != null) jedis.pfadd("fU:uv:" + nowTime, fzteUser.getValue());
 
-            if (handler instanceof HandlerMethod) {
-                HandlerMethod handlerMethod = (HandlerMethod) handler;
-                Method method = handlerMethod.getMethod();
-                if (method.isAnnotationPresent(VisitLimit.class)) {
-                    VisitLimit accessLimit = method.getAnnotation(VisitLimit.class);
-                    int limit = accessLimit.limit();
-                    long sec = accessLimit.sec();
-                    String key = IpUtils.getIpAddr(request) + request.getRequestURI();
-                    Integer value = null;
-                    if (jedis.exists(key)) {
-                        value = Integer.valueOf(String.valueOf(jedis.get(key)));
-                        if (value < limit) {
-                            jedis.setex(key, sec, String.valueOf(value + 1));
-                        } else {
-                            // 请求太繁忙
-                            response.getWriter().write("Requests are busy!");
-                            return false;
-                        }
-                    } else {
-                        jedis.setex(key, sec, "1");
-                    }
-                }
-            }
+            // 验证接口访问限制
+            if (isVisitLimit(request, response, handler, jedis)) return false;
 
             // 验证登录凭证
-            if (request.getCookies() != null && isValidLoginCert(jedis, request, fzteUser)) {
-                return true;
-            }
+            if (request.getCookies() != null && isValidLoginCert(jedis, request, fzteUser)) return true;
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -74,7 +53,34 @@ public class LoginInterceptor implements HandlerInterceptor {
         return false;
     }
 
-    boolean isValidLoginCert(Jedis jedis, HttpServletRequest request, Cookie fzteUser) {
+    private boolean isVisitLimit(HttpServletRequest request, HttpServletResponse response, Object handler, Jedis jedis) throws IOException {
+        if (handler instanceof HandlerMethod) {
+            HandlerMethod handlerMethod = (HandlerMethod) handler;
+            Method method = handlerMethod.getMethod();
+            if (method.isAnnotationPresent(VisitLimit.class)) {
+                VisitLimit accessLimit = method.getAnnotation(VisitLimit.class);
+                int limit = accessLimit.limit();
+                long sec = accessLimit.sec();
+                String key = IpUtils.getIpAddr(request) + request.getRequestURI();
+                Integer value = null;
+                if (jedis.exists(key)) {
+                    value = Integer.valueOf(String.valueOf(jedis.get(key)));
+                    if (value < limit) {
+                        jedis.setex(key, sec, String.valueOf(value + 1));
+                    } else {
+                        // 请求太繁忙
+                        response.getWriter().write("Requests are busy!");
+                        return true;
+                    }
+                } else {
+                    jedis.setex(key, sec, "1");
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean isValidLoginCert(Jedis jedis, HttpServletRequest request, Cookie fzteUser) {
         Cookie onlyLoginCert = WebUtils.getCookie(request, "loginCert");
         if (fzteUser != null && onlyLoginCert != null && Objects.equals(onlyLoginCert.getValue(), jedis.hget("fU:" + fzteUser.getValue(), "lc"))) {
             return true;
