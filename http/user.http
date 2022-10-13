@@ -18,10 +18,10 @@ GET http://localhost:8088/GetIP?date=2022-10-09
 
 ###
 
-POST http://localhost:8088/AddUserWhiteIP?key=127.0.0.1
+POST http://124.223.184.187:8088/AddUserWhiteIP?key=113.140.84.107
 
 ###
 
-POST http://localhost:8088/DelUserWhiteIP?key=127.0.0.1
+POST http://124.223.184.187:8088//DelUserWhiteIP?key=113.140.84.107
 
 ###
