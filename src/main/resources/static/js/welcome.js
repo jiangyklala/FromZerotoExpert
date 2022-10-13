@@ -1,13 +1,35 @@
-window.onload = windowOnload;
-welcome();
+let flagStillAlive = true;  // 心跳信息开关按钮
+let flagShowOnlineUsers = true; // 显示在线人数开关按钮
+let timeStillAlive = 5 * 1000;
+let timeShowOnlineUsers = 7 * 1000;
 
-stillAlive();
-setInterval(stillAlive, 5 * 1000);
-setInterval(showOnlineUsers, 7 * 1000);
+window.onload = windowOnload;
+window.onbeforeunload = windowOnbeforeunload;
+
+welcome();
+stillAliveTimer();
+showOnlineUsersTimer();
+
+
+
 
 function windowOnload() {
     showOnlineUsers();
     showIPPVUV();
+
+}
+
+function windowOnbeforeunload() {
+    flagStillAlive = false;
+    flagShowOnlineUsers = false;
+}
+
+function setTimer(func, time, flag) {
+    function exe() {
+        if (!flag) return;
+        func;
+        setTimeout(exe, time)
+    }
 }
 
 function showIPPVUV() {
@@ -91,6 +113,12 @@ function getNowFormatDate(separator, date) {
     return year + separator + month + separator + strDate;
 }
 
+function showOnlineUsersTimer() {
+    if (!flagShowOnlineUsers) return;
+    stillAlive();
+    setTimeout(stillAliveTimer, timeShowOnlineUsers);
+}
+
 // 显示当前在线人数
 function showOnlineUsers() {
     $.ajax({
@@ -105,6 +133,12 @@ function showOnlineUsers() {
             document.getElementById("insertOnlineUser").innerHTML = htmlString;
         }
     })
+}
+
+function stillAliveTimer() {
+    if (!flagStillAlive) return;
+    stillAlive();
+    setTimeout(stillAliveTimer, timeStillAlive);
 }
 
 // 发送心跳信息
