@@ -116,7 +116,7 @@ function getNowFormatDate(separator, date) {
 function showOnlineUsersTimer() {
     if (!flagShowOnlineUsers) return;
     showOnlineUsers();
-    setTimeout(stillAliveTimer, timeShowOnlineUsers);
+    setTimeout(showOnlineUsersTimer, timeShowOnlineUsers);
 }
 
 // 显示当前在线人数
