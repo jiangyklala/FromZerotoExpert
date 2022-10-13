@@ -57,12 +57,13 @@ public class LoginInterceptor implements HandlerInterceptor {
      * 接口访问限制
      */
     private boolean isVisitLimit(HttpServletRequest request, HttpServletResponse response, Object handler, Jedis jedis) throws IOException {
-        String userIPAndURL = IpUtils.getIpAddr(request) + request.getRequestURI();
+        String userIP= IpUtils.getIpAddr(request);
+        String userIPAndURL = userIP + request.getRequestURI();
 
         if (handler instanceof HandlerMethod) {
 
             // 判断用户IP在白名单中, 直接返回
-            if (jedis.sismember("fU:wI", userIPAndURL)) {
+            if (jedis.sismember("fU:wI", userIP)) {
                 return false;
             }
 
