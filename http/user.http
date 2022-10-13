@@ -18,10 +18,10 @@ GET http://localhost:8088/GetIP?date=2022-10-09
 
 ###
 
-POST http://localhost:8088/AddUserWhiteIP?key=127.0.0.1/FromZerotoExpert
+POST http://localhost:8088/AddUserWhiteIP?key=127.0.0.1
 
 ###
 
-POST http://localhost:8088/DelUserWhiteIP?key=127.0.0.1/FromZerotoExpert
+POST http://localhost:8088/DelUserWhiteIP?key=127.0.0.1
 
 ###
