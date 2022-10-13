@@ -53,27 +53,39 @@ public class LoginInterceptor implements HandlerInterceptor {
         return false;
     }
 
+    /**
+     * 接口访问限制
+     */
     private boolean isVisitLimit(HttpServletRequest request, HttpServletResponse response, Object handler, Jedis jedis) throws IOException {
+        String userIPAndURL = IpUtils.getIpAddr(request) + request.getRequestURI();
+
         if (handler instanceof HandlerMethod) {
+
+            // 判断用户IP在白名单中, 直接返回
+            if (jedis.sismember("fU:wI", userIPAndURL)) {
+                return false;
+            }
+
+            // 不再名单中则进行接口限制判断
             HandlerMethod handlerMethod = (HandlerMethod) handler;
             Method method = handlerMethod.getMethod();
+            // 访问的接口中是否含有[访问次数限制]的注解
             if (method.isAnnotationPresent(VisitLimit.class)) {
                 VisitLimit accessLimit = method.getAnnotation(VisitLimit.class);
                 int limit = accessLimit.limit();
                 long sec = accessLimit.sec();
-                String key = IpUtils.getIpAddr(request) + request.getRequestURI();
                 Integer value = null;
-                if (jedis.exists(key)) {
-                    value = Integer.valueOf(String.valueOf(jedis.get(key)));
-                    if (value < limit) {
-                        jedis.setex(key, sec, String.valueOf(value + 1));
+                if (jedis.exists(userIPAndURL)) {  // 用户在 sec 期间已经访问过吗
+                    value = Integer.valueOf(String.valueOf(jedis.get(userIPAndURL)));
+                    if (value < limit) {  // 判断访问次数是否超限
+                        jedis.setex(userIPAndURL, sec, String.valueOf(value + 1));
                     } else {
                         // 请求太繁忙
                         response.getWriter().write("Requests are busy!");
                         return true;
                     }
                 } else {
-                    jedis.setex(key, sec, "1");
+                    jedis.setex(userIPAndURL, sec, "1");
                 }
             }
         }
