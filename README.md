@@ -102,6 +102,6 @@
    + 设计一个注释类 VisitLimit ：sec 时间内只能访问 limit 次（我这里设置的是10秒钟只能访问2次）
    + 在拦截器中拦截： 请求的IP地址是否在白名单内，在则直接跳过限制的判断； 不在则判断拦截的请求对应的接口是否具有 VisitLimit 注解，进行相关判断
 2. **用户白名单设计：** 
-   + 使用 redis 中的 set, key为 [fU:wI]，查询复杂度 $O(1)$ 
+   + 使用 redis 中的 set, key为 **[fU:wI]**，value为**[用户IP+访问的接口]** 查询复杂度 $O(1)$ 
    + 增加程序运行过程中动态增删用户白名单接口 /AddUserWhiteIP，/DelUserWhiteIP
 
