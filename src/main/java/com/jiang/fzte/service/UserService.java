@@ -35,7 +35,7 @@ public class UserService {
     @PostConstruct
     public void init() {
         jedisPool = new JedisPool(setJedisPoolConfig(), "124.223.184.187", 6379, 5000, "jiang", 1);
-//        initJedisPool(jedisPool);
+        initJedisPool(jedisPool);
     }
 
     /**
@@ -89,16 +89,10 @@ public class UserService {
      * 在 zset 中添加: score = 用户登录的时间戳, member = 用户账号
      */
     public void userOnline(String userAccount, long time) {
-        Jedis jedis = null;
-        try {
-            jedis = jedisPool.getResource();
+        try (Jedis jedis = jedisPool.getResource()) {
             jedis.zadd("fU:oL", time, userAccount);  // fzteUser:online
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            if (jedis != null) {
-                jedis.close();
-            }
         }
     }
 
@@ -110,14 +104,10 @@ public class UserService {
         cookieLoginCert.setMaxAge(60 * 60 * 24);
         response.addCookie(cookieLoginCert);
 
-        Jedis jedis = null;
-        try {
-            jedis = jedisPool.getResource();
+        try (Jedis jedis = jedisPool.getResource()) {
             jedis.hset("fU:" + userAccount, "lc", onlyLoginCert);  // lc : loginCert
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            jedis.close();
         }
     }
 
@@ -129,14 +119,10 @@ public class UserService {
         response.addHeader("token", onlyLoginCert);
         System.out.println("token添加成功");
 
-        Jedis jedis = null;
-        try {
-            jedis = jedisPool.getResource();
+        try (Jedis jedis = jedisPool.getResource()) {
             jedis.hset("fU:" + userAccount, "lc", onlyLoginCert);  // lc : loginCert
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            jedis.close();
         }
     }
 
@@ -144,8 +130,7 @@ public class UserService {
      * 更新用户登录凭证
      */
     public boolean updateLoginCert(String userAccount, String nowUserAccount, HttpServletResponse response) {
-        Jedis jedis= jedisPool.getResource();
-        try {
+        try (Jedis jedis = jedisPool.getResource()) {
 
             //  此时登录的账号和redis中记录的不同, 直接返回添加新凭证
             if (!Objects.equals(userAccount, nowUserAccount)) {
@@ -166,10 +151,6 @@ public class UserService {
             response.addCookie(cookieUserAccount);
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            if (jedis != null) {
-                jedis.close();
-            }
         }
         return true;
     }
@@ -185,15 +166,10 @@ public class UserService {
         response.addCookie(cookieUserAccount);
 
         // redis中更新账号信息的期效(必定存在此hash键, 因为在controller中登陆成功后先添加的唯一登录凭证)
-        Jedis jedis= jedisPool.getResource();
-        try {
+        try (Jedis jedis = jedisPool.getResource()) {
             jedis.expire("fU:" + nowUserAccount, 60 * 60 * 24);  // 设置自动登录期效
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            if (jedis != null) {
-                jedis.close();
-            }
         }
     }
 

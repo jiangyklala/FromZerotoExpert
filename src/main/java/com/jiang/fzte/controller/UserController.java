@@ -198,14 +198,16 @@ public class UserController {
     @ResponseBody
     public CommonResp<String> welcome(@CookieValue(value = "fzteUser", required = false) String userAccount) {
         CommonResp<String> resp = new CommonResp<>();
-        Jedis jedis= UserService.jedisPool.getResource();
-        // 根据是否有Cookie, 且 Cookie 中的 userAccount 在 redis 中是否过期(防止用户手动更改 Cookie 有效期)
-        if (userAccount == null || !jedis.exists("fU:" + userAccount)) {
-            resp.setSuccess(false);
-        } else {
-            resp.setContent(userAccount);
+        try (Jedis jedis = UserService.jedisPool.getResource()) {
+            // 根据是否有Cookie, 且 Cookie 中的 userAccount 在 redis 中是否过期(防止用户手动更改 Cookie 有效期)
+            if (userAccount == null || !jedis.exists("fU:" + userAccount)) {
+                resp.setSuccess(false);
+            } else {
+                resp.setContent(userAccount);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        jedis.close();
         return resp;
     }
 

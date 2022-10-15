@@ -26,10 +26,8 @@ public class IPUVPVTransfer {
         Date date = new Date();
         String twoDaysBefore = new SimpleDateFormat("yyyyMMdd").format(new Date(date.getTime() - 2 * 24 * 60 * 60 * 1000)); // 只要年月日
         String oneMonthBefore = new SimpleDateFormat("yyyyMMdd").format(new Date(date.getTime() - 30L * 24 * 60 * 60 * 1000)); // 只要年月日
-        Jedis jedis = null;
 
-        try {
-            jedis = userService.jedisPool.getResource();
+        try (Jedis jedis = userService.jedisPool.getResource()) {
             Ipuvpv_data ipuvpv_data = new Ipuvpv_data();
 
             ipuvpv_data.setDate(twoDaysBefore);
@@ -63,10 +61,6 @@ public class IPUVPVTransfer {
 
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            if (jedis != null) {
-                jedis.close();
-            }
         }
     }
 }
