@@ -3,14 +3,14 @@ package com.jiang.fzte.domain;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LogHistoryExample {
+public class RecordLogExample {
     protected String orderByClause;
 
     protected boolean distinct;
 
     protected List<Criteria> oredCriteria;
 
-    public LogHistoryExample() {
+    public RecordLogExample() {
         oredCriteria = new ArrayList<>();
     }
 

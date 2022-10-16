@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.jiang.fzte.mapper.LogHistoryMapper">
-  <resultMap id="BaseResultMap" type="com.jiang.fzte.domain.LogHistory">
+<mapper namespace="com.jiang.fzte.mapper.RecordLogMapper">
+  <resultMap id="BaseResultMap" type="com.jiang.fzte.domain.RecordLog">
     <id column="op_time" jdbcType="BIGINT" property="opTime" />
     <result column="op_ac" jdbcType="VARCHAR" property="opAc" />
     <result column="status" jdbcType="VARCHAR" property="status" />
@@ -75,13 +75,13 @@
     op_time, op_ac, `status`, op_type, req_url, req_mtd, op_desc, err_msg, time_csm, 
     op_ip
   </sql>
-  <select id="selectByExample" parameterType="com.jiang.fzte.domain.LogHistoryExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.jiang.fzte.domain.RecordLogExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from log_history
+    from record_log
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -92,21 +92,21 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from log_history
+    from record_log
     where op_time = #{opTime,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from log_history
+    delete from record_log
     where op_time = #{opTime,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.jiang.fzte.domain.LogHistoryExample">
-    delete from log_history
+  <delete id="deleteByExample" parameterType="com.jiang.fzte.domain.RecordLogExample">
+    delete from record_log
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.jiang.fzte.domain.LogHistory">
-    insert into log_history (op_time, op_ac, `status`, 
+  <insert id="insert" parameterType="com.jiang.fzte.domain.RecordLog">
+    insert into record_log (op_time, op_ac, `status`, 
       op_type, req_url, req_mtd, 
       op_desc, err_msg, time_csm, 
       op_ip)
@@ -115,8 +115,8 @@
       #{opDesc,jdbcType=VARCHAR}, #{errMsg,jdbcType=VARCHAR}, #{timeCsm,jdbcType=VARCHAR}, 
       #{opIp,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.jiang.fzte.domain.LogHistory">
-    insert into log_history
+  <insert id="insertSelective" parameterType="com.jiang.fzte.domain.RecordLog">
+    insert into record_log
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="opTime != null">
         op_time,
@@ -182,14 +182,14 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.jiang.fzte.domain.LogHistoryExample" resultType="java.lang.Long">
-    select count(*) from log_history
+  <select id="countByExample" parameterType="com.jiang.fzte.domain.RecordLogExample" resultType="java.lang.Long">
+    select count(*) from record_log
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update log_history
+    update record_log
     <set>
       <if test="record.opTime != null">
         op_time = #{record.opTime,jdbcType=BIGINT},
@@ -227,7 +227,7 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update log_history
+    update record_log
     set op_time = #{record.opTime,jdbcType=BIGINT},
       op_ac = #{record.opAc,jdbcType=VARCHAR},
       `status` = #{record.status,jdbcType=VARCHAR},
@@ -242,8 +242,8 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.jiang.fzte.domain.LogHistory">
-    update log_history
+  <update id="updateByPrimaryKeySelective" parameterType="com.jiang.fzte.domain.RecordLog">
+    update record_log
     <set>
       <if test="opAc != null">
         op_ac = #{opAc,jdbcType=VARCHAR},
@@ -275,8 +275,8 @@
     </set>
     where op_time = #{opTime,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.jiang.fzte.domain.LogHistory">
-    update log_history
+  <update id="updateByPrimaryKey" parameterType="com.jiang.fzte.domain.RecordLog">
+    update record_log
     set op_ac = #{opAc,jdbcType=VARCHAR},
       `status` = #{status,jdbcType=VARCHAR},
       op_type = #{opType,jdbcType=VARCHAR},

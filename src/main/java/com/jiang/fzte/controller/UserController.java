@@ -26,6 +26,7 @@ public class UserController {
      * 增加用户白名单
      * @return 返回添加成功的个数; "-1"--添加失败
      */
+    @LogAnnotation(opType = "UPDATE", opDesc = "添加用户IP白名单")
     @PostMapping("/AddUserWhiteIP")
     @ResponseBody
     public String addUserWhiteIP(String key) {
@@ -42,6 +43,7 @@ public class UserController {
      * 增加用户白名单
      * @return 返回删除成功的个数; "-1"--删除失败
      */
+    @LogAnnotation(opType = "UPDATE", opDesc = "删除用户IP白名单")
     @PostMapping("/DelUserWhiteIP")
     @ResponseBody
     public String delUserWhiteIP(String key) {
@@ -157,6 +159,7 @@ public class UserController {
     /**
      * 注册接口
      */
+    @LogAnnotation(opType = "REGISTER", opDesc = "用户注册")
     @PostMapping("/Register")
     @ResponseBody
     public CommonResp<User> register(User user) {
@@ -174,6 +177,7 @@ public class UserController {
     /**
      * 登录接口
      */
+    @LogAnnotation(opType = "LOGIN", opDesc = "用户登录")
     @PostMapping("/Login")
     @ResponseBody
     public CommonResp<User> login(@CookieValue(value = "fzteUser", required = false) String userAccount, User user, HttpServletResponse response) {
@@ -215,7 +219,6 @@ public class UserController {
     /**
      * 首页
      */
-    @LogAnnotation(opType = "LOGIN", opDesc = "用户登录主页")
     @VisitLimit(limit = 2, sec = 10)
     @GetMapping("/FromZerotoExpert")
     public String fromZerotoExpert() {

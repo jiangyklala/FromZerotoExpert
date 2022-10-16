@@ -1,6 +1,6 @@
 package com.jiang.fzte.domain;
 
-public class LogHistory {
+public class RecordLog {
     private Long opTime;
 
     private String opAc;

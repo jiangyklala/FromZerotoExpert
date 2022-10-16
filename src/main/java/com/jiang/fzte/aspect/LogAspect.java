@@ -2,11 +2,10 @@ package com.jiang.fzte.aspect;
 
 
 import com.jiang.fzte.annotation.LogAnnotation;
-import com.jiang.fzte.domain.LogHistory;
-import com.jiang.fzte.mapper.LogHistoryMapper;
+import com.jiang.fzte.domain.RecordLog;
+import com.jiang.fzte.mapper.RecordLogMapper;
 import com.jiang.fzte.util.IpUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
@@ -27,7 +26,7 @@ import java.lang.reflect.Method;
 public class LogAspect {
 
     @Resource
-    private LogHistoryMapper logHistoryMapper;
+    private RecordLogMapper recordLogMapper;
 
     @Pointcut("@annotation(com.jiang.fzte.annotation.LogAnnotation)")
     public void pointCut() {}
@@ -54,24 +53,25 @@ public class LogAspect {
         Method method = signature.getMethod();
         LogAnnotation logAnnotation = method.getAnnotation(LogAnnotation.class);  // 注释类
         Cookie fzteUser = WebUtils.getCookie(request, "fzteUser");  // 获取用户ID
-        LogHistory logHistory = new LogHistory();
+        RecordLog recordLog = new RecordLog();
 
         try {
-            logHistory.setOpType(logAnnotation.opType());
-            logHistory.setOpDesc(logAnnotation.opDesc());
-            logHistory.setOpIp(IpUtils.getIpAddr(request));
-            logHistory.setReqUrl(request.getRequestURI().toString());
-            logHistory.setReqMtd(joinPoint.getTarget().getClass().getName() + "." + signature.getName());
-            logHistory.setOpTime(opTime);
-            logHistory.setTimeCsm(timeCsm);
-            if (fzteUser != null) logHistory.setOpAc(fzteUser.getValue());
+            // 记录信息
+            recordLog.setOpType(logAnnotation.opType());
+            recordLog.setOpDesc(logAnnotation.opDesc());
+            recordLog.setOpIp(IpUtils.getIpAddr(request));
+            recordLog.setReqUrl(request.getRequestURI().toString());
+            recordLog.setReqMtd(joinPoint.getTarget().getClass().getName() + "." + signature.getName());
+            recordLog.setOpTime(opTime);
+            recordLog.setTimeCsm(timeCsm);
+            if (fzteUser != null) recordLog.setOpAc(fzteUser.getValue());
         } catch (Exception e) {
-            logHistory.setStatus("failed");
+            recordLog.setStatus("failed");
         }
 
-        logHistory.setStatus("success");
+        recordLog.setStatus("success");
 
-        logHistoryMapper.insert(logHistory);
+        recordLogMapper.insert(recordLog);
 
     }
 
