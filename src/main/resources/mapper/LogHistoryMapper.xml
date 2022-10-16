@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiang.fzte.mapper.LogHistoryMapper">
+  <resultMap id="BaseResultMap" type="com.jiang.fzte.domain.LogHistory">
+    <id column="op_time" jdbcType="BIGINT" property="opTime" />
+    <result column="op_ac" jdbcType="VARCHAR" property="opAc" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="op_type" jdbcType="VARCHAR" property="opType" />
+    <result column="req_url" jdbcType="VARCHAR" property="reqUrl" />
+    <result column="req_mtd" jdbcType="VARCHAR" property="reqMtd" />
+    <result column="op_desc" jdbcType="VARCHAR" property="opDesc" />
+    <result column="err_msg" jdbcType="VARCHAR" property="errMsg" />
+    <result column="time_csm" jdbcType="VARCHAR" property="timeCsm" />
+    <result column="op_ip" jdbcType="VARCHAR" property="opIp" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    op_time, op_ac, `status`, op_type, req_url, req_mtd, op_desc, err_msg, time_csm, 
+    op_ip
+  </sql>
+  <select id="selectByExample" parameterType="com.jiang.fzte.domain.LogHistoryExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from log_history
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from log_history
+    where op_time = #{opTime,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from log_history
+    where op_time = #{opTime,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.jiang.fzte.domain.LogHistoryExample">
+    delete from log_history
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.jiang.fzte.domain.LogHistory">
+    insert into log_history (op_time, op_ac, `status`, 
+      op_type, req_url, req_mtd, 
+      op_desc, err_msg, time_csm, 
+      op_ip)
+    values (#{opTime,jdbcType=BIGINT}, #{opAc,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
+      #{opType,jdbcType=VARCHAR}, #{reqUrl,jdbcType=VARCHAR}, #{reqMtd,jdbcType=VARCHAR}, 
+      #{opDesc,jdbcType=VARCHAR}, #{errMsg,jdbcType=VARCHAR}, #{timeCsm,jdbcType=VARCHAR}, 
+      #{opIp,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.jiang.fzte.domain.LogHistory">
+    insert into log_history
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="opTime != null">
+        op_time,
+      </if>
+      <if test="opAc != null">
+        op_ac,
+      </if>
+      <if test="status != null">
+        `status`,
+      </if>
+      <if test="opType != null">
+        op_type,
+      </if>
+      <if test="reqUrl != null">
+        req_url,
+      </if>
+      <if test="reqMtd != null">
+        req_mtd,
+      </if>
+      <if test="opDesc != null">
+        op_desc,
+      </if>
+      <if test="errMsg != null">
+        err_msg,
+      </if>
+      <if test="timeCsm != null">
+        time_csm,
+      </if>
+      <if test="opIp != null">
+        op_ip,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="opTime != null">
+        #{opTime,jdbcType=BIGINT},
+      </if>
+      <if test="opAc != null">
+        #{opAc,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="opType != null">
+        #{opType,jdbcType=VARCHAR},
+      </if>
+      <if test="reqUrl != null">
+        #{reqUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="reqMtd != null">
+        #{reqMtd,jdbcType=VARCHAR},
+      </if>
+      <if test="opDesc != null">
+        #{opDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="errMsg != null">
+        #{errMsg,jdbcType=VARCHAR},
+      </if>
+      <if test="timeCsm != null">
+        #{timeCsm,jdbcType=VARCHAR},
+      </if>
+      <if test="opIp != null">
+        #{opIp,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.jiang.fzte.domain.LogHistoryExample" resultType="java.lang.Long">
+    select count(*) from log_history
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update log_history
+    <set>
+      <if test="record.opTime != null">
+        op_time = #{record.opTime,jdbcType=BIGINT},
+      </if>
+      <if test="record.opAc != null">
+        op_ac = #{record.opAc,jdbcType=VARCHAR},
+      </if>
+      <if test="record.status != null">
+        `status` = #{record.status,jdbcType=VARCHAR},
+      </if>
+      <if test="record.opType != null">
+        op_type = #{record.opType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reqUrl != null">
+        req_url = #{record.reqUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reqMtd != null">
+        req_mtd = #{record.reqMtd,jdbcType=VARCHAR},
+      </if>
+      <if test="record.opDesc != null">
+        op_desc = #{record.opDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="record.errMsg != null">
+        err_msg = #{record.errMsg,jdbcType=VARCHAR},
+      </if>
+      <if test="record.timeCsm != null">
+        time_csm = #{record.timeCsm,jdbcType=VARCHAR},
+      </if>
+      <if test="record.opIp != null">
+        op_ip = #{record.opIp,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update log_history
+    set op_time = #{record.opTime,jdbcType=BIGINT},
+      op_ac = #{record.opAc,jdbcType=VARCHAR},
+      `status` = #{record.status,jdbcType=VARCHAR},
+      op_type = #{record.opType,jdbcType=VARCHAR},
+      req_url = #{record.reqUrl,jdbcType=VARCHAR},
+      req_mtd = #{record.reqMtd,jdbcType=VARCHAR},
+      op_desc = #{record.opDesc,jdbcType=VARCHAR},
+      err_msg = #{record.errMsg,jdbcType=VARCHAR},
+      time_csm = #{record.timeCsm,jdbcType=VARCHAR},
+      op_ip = #{record.opIp,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jiang.fzte.domain.LogHistory">
+    update log_history
+    <set>
+      <if test="opAc != null">
+        op_ac = #{opAc,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        `status` = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="opType != null">
+        op_type = #{opType,jdbcType=VARCHAR},
+      </if>
+      <if test="reqUrl != null">
+        req_url = #{reqUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="reqMtd != null">
+        req_mtd = #{reqMtd,jdbcType=VARCHAR},
+      </if>
+      <if test="opDesc != null">
+        op_desc = #{opDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="errMsg != null">
+        err_msg = #{errMsg,jdbcType=VARCHAR},
+      </if>
+      <if test="timeCsm != null">
+        time_csm = #{timeCsm,jdbcType=VARCHAR},
+      </if>
+      <if test="opIp != null">
+        op_ip = #{opIp,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where op_time = #{opTime,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jiang.fzte.domain.LogHistory">
+    update log_history
+    set op_ac = #{opAc,jdbcType=VARCHAR},
+      `status` = #{status,jdbcType=VARCHAR},
+      op_type = #{opType,jdbcType=VARCHAR},
+      req_url = #{reqUrl,jdbcType=VARCHAR},
+      req_mtd = #{reqMtd,jdbcType=VARCHAR},
+      op_desc = #{opDesc,jdbcType=VARCHAR},
+      err_msg = #{errMsg,jdbcType=VARCHAR},
+      time_csm = #{timeCsm,jdbcType=VARCHAR},
+      op_ip = #{opIp,jdbcType=VARCHAR}
+    where op_time = #{opTime,jdbcType=BIGINT}
+  </update>
+</mapper>

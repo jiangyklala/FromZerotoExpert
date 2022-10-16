@@ -53,3 +53,18 @@ create table `ipuvpv_data` (
                         primary key (`id`)
 ) engine=innodb default charset=utf8mb4 comment='IPUVPV数据';
 
+drop table if exists `log_history`;
+create table `log_history` (
+                        `op_time` bigint not null,
+                        `op_ac` varchar(50) default(NULL),
+                        `status` varchar(50) not null default(NULL),
+                        `op_type` varchar(50) not null default(NULL),
+                        `req_url` varchar(50) not null default(NULL),
+                        `req_mtd` varchar(255) not null default(NULL),
+                        `op_desc` varchar(50) default(NULL),
+                        `err_msg` varchar(50) default(NULL),
+                        `time_csm` varchar(50) not null default(NULL),
+                        `op_ip` varchar(50) not null default(NULL),
+                        primary key (`op_time`)
+) engine=innodb default charset=utf8mb4 comment='系统操作日志';
+

@@ -1,6 +1,7 @@
 package com.jiang.fzte.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.jiang.fzte.annotation.LogAnnotation;
 import com.jiang.fzte.annotation.VisitLimit;
 import com.jiang.fzte.domain.User;
 import com.jiang.fzte.resp.CommonResp;
@@ -214,6 +215,7 @@ public class UserController {
     /**
      * 首页
      */
+    @LogAnnotation(opType = "LOGIN", opDesc = "用户登录主页")
     @VisitLimit(limit = 2, sec = 10)
     @GetMapping("/FromZerotoExpert")
     public String fromZerotoExpert() {
