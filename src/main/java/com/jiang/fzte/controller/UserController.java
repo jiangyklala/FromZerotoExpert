@@ -15,6 +15,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @Controller
 public class UserController {
@@ -159,7 +160,6 @@ public class UserController {
     /**
      * 注册接口
      */
-    @LogAnnotation(opType = "REGISTER", opDesc = "用户注册")
     @PostMapping("/Register")
     @ResponseBody
     public CommonResp<User> register(User user) {
@@ -169,7 +169,7 @@ public class UserController {
         if (resp.isSuccess()) {
             userService.encryptPassword(user, userService.setSalt(user));  // 设置盐值并密码加密
             userService.addUser(user, resp);
-
+            resp.setContent(user);
         }
         return resp;
     }
@@ -177,10 +177,9 @@ public class UserController {
     /**
      * 登录接口
      */
-    @LogAnnotation(opType = "LOGIN", opDesc = "用户登录")
     @PostMapping("/Login")
     @ResponseBody
-    public CommonResp<User> login(@CookieValue(value = "fzteUser", required = false) String userAccount, User user, HttpServletResponse response) {
+    public CommonResp<User> login(@CookieValue(value = "fzteUser", required = false) String userAccount, User user, HttpServletResponse response) throws IOException {
         CommonResp<User> resp = new CommonResp<>();
         userService.isLoginUserAccount(user.getUseraccount(), resp);
         userService.isLoginPassword(user, resp);  // 这里需要传入user, 获取其账号和密码
@@ -192,6 +191,7 @@ public class UserController {
                 // 在无Cookie记录, 或者有Cookie但更新失败时, 重新添加新的登录凭证;(失败包括:账号失效和此时登录的账号和redis中记录的不同)
                 userService.addLoginCert(user.getUseraccount(), response);
             }
+            resp.setContent(user);
         }
         return resp;
     }
@@ -219,6 +219,7 @@ public class UserController {
     /**
      * 首页
      */
+    @LogAnnotation(opType = "READ", opDesc = "用户访问主页")
     @VisitLimit(limit = 2, sec = 10)
     @GetMapping("/FromZerotoExpert")
     public String fromZerotoExpert() {
