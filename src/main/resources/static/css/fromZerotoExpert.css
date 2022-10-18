@@ -1,0 +1,16 @@
+table {
+    border: 1px solid cornflowerblue;
+    width: 80%;
+    border-collapse: collapse;
+}
+
+th {
+    font-weight: bold;
+    border: 1px solid cornflowerblue;
+    background-color: darkcyan;
+    color: white;
+}
+
+td {
+    border: 1px solid cornflowerblue;
+}
