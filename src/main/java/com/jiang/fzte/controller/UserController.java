@@ -191,8 +191,8 @@ public class UserController {
                 // 在无Cookie记录, 或者有Cookie但更新失败时, 重新添加新的登录凭证;(失败包括:账号失效和此时登录的账号和redis中记录的不同)
                 userService.addLoginCert(user.getUseraccount(), response);
             }
-            resp.setContent(user);
         }
+        resp.setContent(user);
         return resp;
     }
 
