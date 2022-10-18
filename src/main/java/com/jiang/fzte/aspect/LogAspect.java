@@ -68,9 +68,11 @@ public class LogAspect {
             CommonResp<User> commonResp = (CommonResp<User>) result;
             User user = commonResp.getContent();
             String userAc = user.getUseraccount();
+            String status = commonResp.isSuccess() ? "true" : "false";
+            String errMsg = commonResp.getMessage();
 
             // 保存日志
-            saveLog(userAc, request, joinPoint, opTime, Long.toString(System.currentTimeMillis() - opTime), "Login", "用户登录");
+            saveLog(status, userAc, request, joinPoint, opTime, Long.toString(System.currentTimeMillis() - opTime), "Login", "用户登录", errMsg);
         }
         return result;
     }
@@ -89,9 +91,11 @@ public class LogAspect {
             CommonResp<User> commonResp = (CommonResp<User>) result;
             User user = commonResp.getContent();
             String userAc = user.getUseraccount();
+            String status = commonResp.isSuccess() ? "true" : "false";
+            String errMsg = commonResp.getMessage();
 
             // 保存日志
-            saveLog(userAc, request, joinPoint, opTime, Long.toString(System.currentTimeMillis() - opTime), "Register", "用户注册");
+            saveLog(status, userAc, request, joinPoint, opTime, Long.toString(System.currentTimeMillis() - opTime), "Register", "用户注册", errMsg);
         }
         return result;
     }
@@ -126,7 +130,7 @@ public class LogAspect {
     }
 
     @Async
-    void saveLog(String userAc, HttpServletRequest request, ProceedingJoinPoint joinPoint, Long opTime, String timeCsm, String opType, String opDesc) {
+    void saveLog(String status, String userAc, HttpServletRequest request, ProceedingJoinPoint joinPoint, Long opTime, String timeCsm, String opType, String opDesc, String errMsg) {
 
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
@@ -143,11 +147,12 @@ public class LogAspect {
             recordLog.setReqMtd(joinPoint.getTarget().getClass().getName() + "." + signature.getName());
             recordLog.setOpTime(opTime);
             recordLog.setTimeCsm(timeCsm);
+            recordLog.setErrMsg(errMsg);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        recordLog.setStatus("success");
+        recordLog.setStatus(status);
 
         recordLogMapper.insert(recordLog);
 
