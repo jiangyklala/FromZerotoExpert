@@ -169,8 +169,8 @@ public class UserController {
         if (resp.isSuccess()) {
             userService.encryptPassword(user, userService.setSalt(user));  // 设置盐值并密码加密
             userService.addUser(user, resp);
-            resp.setContent(user);
         }
+        resp.setContent(user);
         return resp;
     }
 
