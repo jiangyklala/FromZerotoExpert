@@ -48,6 +48,15 @@ public class UserService {
 //        initJedisPool(jedisPool);
     }
 
+    /**
+     *  获取指定用户的操作记录
+     * @param pageNum 要查询的页码
+     * @param pageSize 每页多少条
+     * @param userAc 用户账号
+     * @param status 用户操作状态
+     * @param opTimeStart 查询的开始时间
+     * @param opTimeEnd 查询的结束时间
+     */
     public PageInfo<RecordLog> getRecordLog(Integer pageNum, Integer pageSize, String userAc, String status, Long opTimeStart, Long opTimeEnd) {
         PageHelper.startPage(pageNum, pageSize, true);
         RecordLogExample recordLogExample = new RecordLogExample();
