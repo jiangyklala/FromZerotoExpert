@@ -68,7 +68,7 @@ public class LogAspect {
             CommonResp<User> commonResp = (CommonResp<User>) result;
             User user = commonResp.getContent();
             String userAc = user.getUseraccount();
-            String status = commonResp.isSuccess() ? "true" : "false";
+            String status = commonResp.isSuccess() ? "success" : "failed";
             String errMsg = commonResp.getMessage();
 
             // 保存日志
@@ -91,7 +91,7 @@ public class LogAspect {
             CommonResp<User> commonResp = (CommonResp<User>) result;
             User user = commonResp.getContent();
             String userAc = user.getUseraccount();
-            String status = commonResp.isSuccess() ? "true" : "false";
+            String status = commonResp.isSuccess() ? "success" : "failed";
             String errMsg = commonResp.getMessage();
 
             // 保存日志
