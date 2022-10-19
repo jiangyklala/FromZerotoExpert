@@ -1,8 +1,11 @@
 package com.jiang.fzte.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.jiang.fzte.annotation.LogAnnotation;
 import com.jiang.fzte.annotation.VisitLimit;
+import com.jiang.fzte.domain.RecordLog;
 import com.jiang.fzte.domain.User;
 import com.jiang.fzte.resp.CommonResp;
 import com.jiang.fzte.service.UserService;
@@ -16,12 +19,25 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 @Controller
 public class UserController {
 
     @Resource
     private UserService userService;
+
+    @PostMapping("/GetRecordLog")
+    @ResponseBody
+    public PageInfo<RecordLog> getRecordLog(String userAc,
+                               String status,
+                               @RequestParam(required = false, defaultValue = "1665926809889") Long opTimeStart,
+                               @RequestParam(required = false, defaultValue = "1") Long opTimeEnd
+    ) {
+        opTimeEnd = opTimeEnd - 1 > 0  ? opTimeEnd : System.currentTimeMillis();
+        PageInfo<RecordLog> recordLog = userService.getRecordLog(userAc, status, opTimeStart, opTimeEnd);
+        return recordLog;
+    }
 
     /**
      * 增加用户白名单
@@ -129,18 +145,12 @@ public class UserController {
     @ResponseBody
     public String showOnlineUsers() {
         String jsonString = "";
-        Jedis jedis = null;
-        try {
-            jedis = UserService.jedisPool.getResource();
+        try (Jedis jedis = UserService.jedisPool.getResource()) {
             long currentTimeMillis = System.currentTimeMillis();
             // 查出15秒内发送心跳信息的用户
             jsonString = JSON.toJSONString(jedis.zrangeByScore("fU:oL", currentTimeMillis - 6 * 1000, currentTimeMillis));
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            if (jedis != null) {
-                jedis.close();
-            }
         }
         return jsonString;
     }
