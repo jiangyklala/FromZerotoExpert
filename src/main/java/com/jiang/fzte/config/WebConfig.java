@@ -39,6 +39,7 @@ public class WebConfig implements WebMvcConfigurer {
                         "/StillAlive",
                         "/AddUserWhiteIP",
                         "/DelUserWhiteIP",
+                        "/GetRecordLog",
                         "/**/*.html",
                         "/**/*.js",
                         "/**/*.css"

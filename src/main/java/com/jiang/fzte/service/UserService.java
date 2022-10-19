@@ -1,7 +1,12 @@
 package com.jiang.fzte.service;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.jiang.fzte.domain.RecordLog;
+import com.jiang.fzte.domain.RecordLogExample;
 import com.jiang.fzte.domain.User;
 import com.jiang.fzte.domain.UserExample;
+import com.jiang.fzte.mapper.RecordLogMapper;
 import com.jiang.fzte.mapper.UserMapper;
 import com.jiang.fzte.resp.CommonResp;
 import com.jiang.fzte.util.Md5Encrypt;
@@ -9,6 +14,7 @@ import com.jiang.fzte.util.PasswordLimit;
 import com.jiang.fzte.util.SnowFlakeIdWorker;
 import com.jiang.fzte.util.UserAccountLimit;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -17,6 +23,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,13 +36,30 @@ public class UserService {
     @Resource
     private UserMapper userMapper;
 
+    @Resource
+    private RecordLogMapper recordLogMapper;
+
     public static JedisPool jedisPool;
 
 
     @PostConstruct
     public void init() {
         jedisPool = new JedisPool(setJedisPoolConfig(), "124.223.184.187", 6379, 5000, "jiang", 1);
-        initJedisPool(jedisPool);
+//        initJedisPool(jedisPool);
+    }
+
+    public PageInfo<RecordLog> getRecordLog(String userAc, String status, Long opTimeStart, Long opTimeEnd) {
+        PageHelper.startPage(1, 5, true);
+        RecordLogExample recordLogExample = new RecordLogExample();
+        RecordLogExample.Criteria criteria = recordLogExample.createCriteria();
+        criteria.andOpTimeBetween(opTimeStart, opTimeEnd);
+        criteria.andOpAcEqualTo(userAc);
+        criteria.andStatusEqualTo(status);
+        List<RecordLog> recordLogs = recordLogMapper.selectByExample(recordLogExample);
+        PageInfo<RecordLog> pageInfo = new PageInfo<>(recordLogs);
+        System.out.println("总行数: {" + pageInfo.getTotal() + "}");
+        System.out.println("总页数: {" + pageInfo.getPages() + "}");
+        return pageInfo;
     }
 
     /**
@@ -96,13 +120,17 @@ public class UserService {
         }
     }
 
-    public void setOnlyLoginCert(String userAccount, HttpServletResponse response) {
+    /**
+     * 设置用户登录凭证
+     */
+    public void setOnlyLoginCert(String userAccount, HttpServletResponse response) throws IOException {
 
         // 头部增加 Cookie
         String onlyLoginCert = Long.toString(System.currentTimeMillis());
         Cookie cookieLoginCert = new Cookie("loginCert", onlyLoginCert);
         cookieLoginCert.setMaxAge(60 * 60 * 24);
         response.addCookie(cookieLoginCert);
+//        response.flushBuffer();
 
         try (Jedis jedis = jedisPool.getResource()) {
             jedis.hset("fU:" + userAccount, "lc", onlyLoginCert);  // lc : loginCert

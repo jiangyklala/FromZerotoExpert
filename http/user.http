@@ -22,6 +22,8 @@ POST http://124.223.184.187:8088/AddUserWhiteIP?key=113.140.84.107
 
 ###
 
-POST http://124.223.184.187:8088//DelUserWhiteIP?key=113.140.84.107
+POST http://124.223.184.187:8088/DelUserWhiteIP?key=113.140.84.107
 
 ###
+
+POST http://localhost:8088/GetRecordLog?userAc=2021013024&status=success
