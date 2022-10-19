@@ -95,6 +95,13 @@
 			<artifactId>spring-boot-starter-aop</artifactId>
 		</dependency>
 
+<!--		PageHelper-->
+		<dependency>
+			<groupId>com.github.pagehelper</groupId>
+			<artifactId>pagehelper-spring-boot-starter</artifactId>
+			<version>1.4.5</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
