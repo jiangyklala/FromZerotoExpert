@@ -48,8 +48,8 @@ public class UserService {
 //        initJedisPool(jedisPool);
     }
 
-    public PageInfo<RecordLog> getRecordLog(String userAc, String status, Long opTimeStart, Long opTimeEnd) {
-        PageHelper.startPage(1, 5, true);
+    public PageInfo<RecordLog> getRecordLog(Integer pageNum, Integer pageSize, String userAc, String status, Long opTimeStart, Long opTimeEnd) {
+        PageHelper.startPage(pageNum, pageSize, true);
         RecordLogExample recordLogExample = new RecordLogExample();
         RecordLogExample.Criteria criteria = recordLogExample.createCriteria();
         criteria.andOpTimeBetween(opTimeStart, opTimeEnd);
@@ -57,8 +57,6 @@ public class UserService {
         criteria.andStatusEqualTo(status);
         List<RecordLog> recordLogs = recordLogMapper.selectByExample(recordLogExample);
         PageInfo<RecordLog> pageInfo = new PageInfo<>(recordLogs);
-        System.out.println("总行数: {" + pageInfo.getTotal() + "}");
-        System.out.println("总页数: {" + pageInfo.getPages() + "}");
         return pageInfo;
     }
 

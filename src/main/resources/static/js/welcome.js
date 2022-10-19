@@ -10,8 +10,17 @@ welcome();
 stillAliveTimer();
 showOnlineUsersTimer();
 
+$("#getRecordLog").ajaxForm(function (data) {
+    let htmlString = "<br>" + "记录总条数:" + data.total + "<br>" +
+        "记录总页数:" + data.pages + "<br>" +
+        "查出的数据: " + JSON.stringify(data.list);
+    document.getElementById("insertRecordLog").innerHTML = htmlString;
+});
 
 
+
+
+// 分界线
 
 function windowOnload() {
     showOnlineUsers();

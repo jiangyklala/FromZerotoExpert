@@ -29,13 +29,16 @@ public class UserController {
 
     @PostMapping("/GetRecordLog")
     @ResponseBody
-    public PageInfo<RecordLog> getRecordLog(String userAc,
-                               String status,
-                               @RequestParam(required = false, defaultValue = "1665926809889") Long opTimeStart,
-                               @RequestParam(required = false, defaultValue = "1") Long opTimeEnd
+    public PageInfo<RecordLog> getRecordLog(
+                                            String userAc,
+                                            String status,
+                                            Integer pageNum,
+                                            @RequestParam(required = false, defaultValue = "5") Integer pageSize,
+                                            @RequestParam(required = false, defaultValue = "1665926809889") Long opTimeStart,
+                                            @RequestParam(required = false, defaultValue = "1") Long opTimeEnd
     ) {
         opTimeEnd = opTimeEnd - 1 > 0  ? opTimeEnd : System.currentTimeMillis();
-        PageInfo<RecordLog> recordLog = userService.getRecordLog(userAc, status, opTimeStart, opTimeEnd);
+        PageInfo<RecordLog> recordLog = userService.getRecordLog(pageNum, pageSize, userAc, status, opTimeStart, opTimeEnd);
         return recordLog;
     }
 

@@ -14,6 +14,22 @@
 <div id="insertWelcome"></div>
 <div id="insertIPUVPV" style="text-align: center"></div>
 <div id="insertOnlineUser" style="float: right"></div>
+<br>
+
+<form id="getRecordLog" action="/GetRecordLog" method="post">
+    日志查询: <br>
+    必填: 账号:<input name="userAc" required="required">
+    状态:<select name="status" required="required">
+             <option value="success">success</option>
+             <option value="failed">failed</option>
+         </select>
+    查第n页:<input name="pageNum" required="required"><br>
+    选填: 开始时间戳(ms, 默认最早):<input name="opTimeStart" >
+    结束时间戳(ms, 默认最晚):<input name="opTimeEnd" >
+    <input type="submit" value="查询"><br>
+</form>
+<div id="insertRecordLog"></div>
+
 
 </body>
 
