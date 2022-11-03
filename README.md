@@ -1,4 +1,25 @@
-[TOC]
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [FromZerotoExpert](#fromzerotoexpert)
+  - [登录与注册模块](#%E7%99%BB%E5%BD%95%E4%B8%8E%E6%B3%A8%E5%86%8C%E6%A8%A1%E5%9D%97)
+    - [注册](#%E6%B3%A8%E5%86%8C)
+  - [登录](#%E7%99%BB%E5%BD%95)
+    - [自动登录](#%E8%87%AA%E5%8A%A8%E7%99%BB%E5%BD%95)
+    - [不允许多个设备同时在线](#%E4%B8%8D%E5%85%81%E8%AE%B8%E5%A4%9A%E4%B8%AA%E8%AE%BE%E5%A4%87%E5%90%8C%E6%97%B6%E5%9C%A8%E7%BA%BF)
+    - [允许 PC 和移动端同时在线](#%E5%85%81%E8%AE%B8-pc-%E5%92%8C%E7%A7%BB%E5%8A%A8%E7%AB%AF%E5%90%8C%E6%97%B6%E5%9C%A8%E7%BA%BF)
+  - [数据统计与拦截](#%E6%95%B0%E6%8D%AE%E7%BB%9F%E8%AE%A1%E4%B8%8E%E6%8B%A6%E6%88%AA)
+    - [如何记录用户的在线状态和离线状态？](#%E5%A6%82%E4%BD%95%E8%AE%B0%E5%BD%95%E7%94%A8%E6%88%B7%E7%9A%84%E5%9C%A8%E7%BA%BF%E7%8A%B6%E6%80%81%E5%92%8C%E7%A6%BB%E7%BA%BF%E7%8A%B6%E6%80%81)
+    - [统计网站在线人数](#%E7%BB%9F%E8%AE%A1%E7%BD%91%E7%AB%99%E5%9C%A8%E7%BA%BF%E4%BA%BA%E6%95%B0)
+    - [统计网站每日访问IP，PV，UV](#%E7%BB%9F%E8%AE%A1%E7%BD%91%E7%AB%99%E6%AF%8F%E6%97%A5%E8%AE%BF%E9%97%AEippvuv)
+    - [防止用户恶意刷屏](#%E9%98%B2%E6%AD%A2%E7%94%A8%E6%88%B7%E6%81%B6%E6%84%8F%E5%88%B7%E5%B1%8F)
+  - [日志系统](#%E6%97%A5%E5%BF%97%E7%B3%BB%E7%BB%9F)
+    - [设计一个简单的日志系统](#%E8%AE%BE%E8%AE%A1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E6%97%A5%E5%BF%97%E7%B3%BB%E7%BB%9F)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+
 
 
 
