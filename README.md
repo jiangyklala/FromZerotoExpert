@@ -163,12 +163,11 @@
 | req_url  | 请求地址   |
 | req_mtd | 类名方法 |
 
-**[10. 17] 遇到的问题： 在对登录(/Login)接口 和 注册(/Register)接口进行日志记录时，无法准确获得用户的账号信息（op_ac）。 **
+**[10. 17] 遇到的问题： 在对登录(/Login)接口 和 注册(/Register)接口进行日志记录时，无法准确获得用户的账号信息（op_ac）。**
 
-**原因为：**目前我是在用户访问 /Login 接口时，在用户本地增加一个 Cookie 来记录用户的账号（使用HttpServletResponse.addCookie( ) 方法），但用户访问 /Login 接口时的 HttpServletRequest 不能获得也是在这个接口中添加的 Cookie 信息，即：虽然这个接口的方法中添加了 Cookie，但此时还未同步到 requset 中（大致是这个意思），必须要这个方法完全结束后的下一次 HttpServletRequest 请求中才能生效。
+**原因为：** 目前我是在用户访问 /Login 接口时，在用户本地增加一个 Cookie 来记录用户的账号（使用HttpServletResponse.addCookie( ) 方法），但用户访问 /Login 接口时的 HttpServletRequest 不能获得也是在这个接口中添加的 Cookie 信息，即：虽然这个接口的方法中添加了 Cookie，但此时还未同步到 requset 中（大致是这个意思），必须要这个方法完全结束后的下一次 HttpServletRequest 请求中才能生效。
 
-**解决：**
-
-	+ 我尝试了在日志系统的环绕通知中先执行 `Object result = joinPoint.proceed();` 再获取 HttpServletRequest，不行。
-	+ 使用 @AfterReturning，返回后通知，也不行。
-	+ 最后我又想可能是这两个接口对于【通用日志记录系统】来说比较特殊，需要单独为他俩写一个日志记录处理方法，然后在这两个方法的返回结果中记录用户的账号信息，这样就能为这两个接口准确记录日志了。目前使用的是这种方法
+**解决：** 
++ 我尝试了在日志系统的环绕通知中先执行 `Object result = joinPoint.proceed();` 再获取 HttpServletRequest，不行。
++ 使用 @AfterReturning，返回后通知，也不行。
++ 最后我又想可能是这两个接口对于【通用日志记录系统】来说比较特殊，需要单独为他俩写一个日志记录处理方法，然后在这两个方法的返回结果中记录用户的账号信息，这样就能为这两个接口准确记录日志了。目前使用的是这种方法
