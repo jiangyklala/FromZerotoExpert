@@ -15,7 +15,10 @@
     - [统计网站每日访问IP，PV，UV](#%E7%BB%9F%E8%AE%A1%E7%BD%91%E7%AB%99%E6%AF%8F%E6%97%A5%E8%AE%BF%E9%97%AEippvuv)
     - [防止用户恶意刷屏](#%E9%98%B2%E6%AD%A2%E7%94%A8%E6%88%B7%E6%81%B6%E6%84%8F%E5%88%B7%E5%B1%8F)
   - [日志系统](#%E6%97%A5%E5%BF%97%E7%B3%BB%E7%BB%9F)
-    - [设计一个简单的日志系统](#%E8%AE%BE%E8%AE%A1%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E6%97%A5%E5%BF%97%E7%B3%BB%E7%BB%9F)
+    - [一个简单的日志系统](#%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E6%97%A5%E5%BF%97%E7%B3%BB%E7%BB%9F)
+    - [日志搜索功能](#%E6%97%A5%E5%BF%97%E6%90%9C%E7%B4%A2%E5%8A%9F%E8%83%BD)
+  - [系统故障排查与监控](#%E7%B3%BB%E7%BB%9F%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5%E4%B8%8E%E7%9B%91%E6%8E%A7)
+    - [1. 用脚本监控 mysql + redis](#1-%E7%94%A8%E8%84%9A%E6%9C%AC%E7%9B%91%E6%8E%A7-mysql--redis)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -144,7 +147,7 @@
 
 ## 日志系统
 
-### 设计一个简单的日志系统
+### 一个简单的日志系统
 
 **思路：** 基于AOP实现：设计一个需要记录日志的注解类(@LogAnnotation)，则切点即为带有此注解的接口，使用环绕通知的方式进行日志打印，同时将日志记录到 mysql 中(记录操作使用异步线程完成)
 
@@ -171,3 +174,99 @@
 + 我尝试了在日志系统的环绕通知中先执行 `Object result = joinPoint.proceed();` 再获取 HttpServletRequest，不行。
 + 使用 @AfterReturning，返回后通知，也不行。
 + 最后我又想可能是这两个接口对于【通用日志记录系统】来说比较特殊，需要单独为他俩写一个日志记录处理方法，然后在这两个方法的返回结果中记录用户的账号信息，这样就能为这两个接口准确记录日志了。目前使用的是这种方法
+
+### 日志搜索功能
+
+一个接口（/GetRecordLog）三个参数（pageSize, opTimeStart, opTimeEnd）
+
+详情查看项目的 APIDoc.md
+
+
+
+## 系统故障排查与监控
+
+### 1. 用脚本监控 mysql + redis
+
+**监控 MySQL 思路**
+
++ 监听 3306 端口
++ 监控 mysqld 进程
++ 同时采用上述两种方法，进程和端口都存在才算 mysql 服务正常 ✓
++ 使用 mysqladmin ping 命令 ✓
+
+**监控 Redis 思路**
+
++ 监控 redis-server 进程 ✓
++ 使用 ping 命令
+
+**设置定时脚本思路**
+
++ 在脚本内采用 `do while` 
++ 利用 linux 中的 corn 定时任务 ✓
+
+**shell 代码如下：**
+
+```shell
+#!/bin/bash
+
+# 监控 MySQL
+# 使用第三种方法
+PROCESS_MySQL=`ps -ef | grep mysqld | grep -v grep | wc -l`
+PORT=`netstat -tlun tcp -p | grep mysql | grep -v grep | wc -l`
+
+if [ $PORT -lt 1 ] && [ $PROCESS_MySQL -lt 2 ]
+then
+    echo "\n$(date): MySQL已停止运行,执行自动重启" >> ../log/check_wrong_MySQL.log
+    echo "jiang" | sudo /usr/local/mysql/support-files/mysql.server start >> ../log/check_wrong_MySQL.log 2>&1
+fi
+
+
+# 使用第四种方法
+#
+#MYSQL_USER=jiang # 定义数据库相关变量
+#MYSQL_PASSWORD=jiang
+#MYSQL_PORT=3306
+#MYSQL_HOST=localhost
+#
+#MYSQL_ADMIN="/usr/local/mysql/bin/mysqladmin -u$MYSQL_USER -p$MYSQL_PASSWORD -P$MYSQL_PORT -h$MYSQL_HOST"
+#
+#$(${MYSQL_ADMIN}) ping >> /dev/null 2>&1
+#
+#if [ $? -ne 0 ]
+#then
+#    echo "\n$(date): MySQL已停止运行,执行自动重启" >> ../log/check_wrong_MySQL.log
+#    echo "jiang" | sudo /usr/local/mysql/support-files/mysql.server start >> ../log/check_wrong_MySQL.log 2>&1
+#fi
+
+
+# 监控 Redis
+PROCESS_Redis=`ps -ef | grep "redis-server 127.0.0.1:6379" | grep -v grep | wc -l`
+
+if [ $PROCESS_Redis -lt 1 ]
+then
+    echo "\n$(date): Redis已停止运行，正在重启" >> ../log/check_wrong_Redis.log 2>&1
+    redis-server /usr/local/etc/redis.conf
+fi
+
+```
+
+**测试结果（事先手动关闭了 MySQL 和 Redis 服务）：**
+
+![](https://xiaoj-1309630359.cos.ap-nanjing.myqcloud.com/202301060133989.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
